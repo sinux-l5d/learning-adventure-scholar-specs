@@ -91,6 +91,9 @@ components:
         nom:
           type: string
           format: string
+        template:
+          type: string
+          format: string
         enonce:
           type: string
           description: Énoncé de l'exercice à réaliser
