@@ -88,6 +88,9 @@ components:
           format: ObjectId
           description: Id natif de Mongo-db
           example: 507f1f77bcf86cd799439011
+        nom:
+          type: string
+          format: string
         enonce:
           type: string
           description: Énoncé de l'exercice à réaliser
@@ -123,8 +126,16 @@ components:
         - $ref: '#/components/schemas/ExerciceModelePartiel'
         - type: object
           properties:
-            tests:
-              $ref: '#/components/schemas/Test'
+            dataset:
+              type: array
+              items:
+                type: object
+                properties:
+                  contexte:
+                    type: string
+                    format: string
+                  jeuDeTests:
+                    $ref: '#/components/schemas/Test'
             correction:
               type: string
               description: Correction de l'exercice à réaliser
