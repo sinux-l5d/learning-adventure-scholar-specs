@@ -88,6 +88,9 @@ components:
           format: ObjectId
           description: Id natif de Mongo-db
           example: 507f1f77bcf86cd799439011
+        nom:
+          type: string
+          format: string
         enonce:
           type: string
           description: Énoncé de l'exercice à réaliser
