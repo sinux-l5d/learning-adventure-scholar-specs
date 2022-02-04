@@ -1,0 +1,76 @@
+openapi: 3.0.1
+info:
+  title: LAWeb | Service de stratégie
+  version: 0.1.0
+paths:
+  /next:
+    post:
+      summary: Définir une stratégie et un ensemble d'exercices
+      tags:
+        - Stratégie
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                exerices:
+                  type: array
+                  items:
+                    type: string
+                    format: ObjectId
+                    description: Id natif de Mongo-db
+                    example: 507f1f77bcf86cd799439011
+                  example:
+                    - 507f1f77bcf86cd799439011
+                    - 5a2493c33c95a1281836eb6a
+                    - 61edc6938c57b58baa85d7c9
+                strategie:
+                  description: >
+                    Ordre des exercices: 
+                      * `lineaire` - Ordre de la liste envoyée
+                      * `meilleurgagne` - Du plus facile au plus difficile
+                  type: string
+                  enum:
+                    - lineaire
+                    - meilleurgagne
+                  
+      responses:
+        '200':
+          description: Réussi
+  /next/{id}:
+    get:
+      summary: Prochain exercice
+      tags:
+        - Stratégie
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+      responses:
+        '200':
+          description: |
+            Prochain exercice
+            
+            Il sera vide s'il n'y a plus d'exercices.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  next:
+                    type: string
+                    format: ObjectId
+                    nullable: true
+                    description: Id natif de Mongo-db
+                    example: 507f1f77bcf86cd799439011
+              examples:
+                prochain:
+                  value: 
+                    next: 61edc6938c57b58baa85d7c9
+                fin:
+                  value:
+                    next: null

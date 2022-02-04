@@ -1,0 +1,167 @@
+openapi: 3.0.1
+info:
+  title: "LAWeb | Service d'exercice"
+  version: '0.1.0'
+paths:
+  /exercices:
+    get:
+      summary: Listes des exercices existant
+      tags:
+        - Exercices
+      parameters:
+        - in: query
+          name: theme
+          schema:
+            type: array
+            items:
+              type: string
+              format: keyworkd
+        - in: query
+          name: difficulte
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10
+      responses:
+        '200':
+          description: Réussi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exercices:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ExerciceModelePartiel'
+    post:
+      summary: Ajouter un exercices
+      tags:
+        - Exercices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExerciceModeleComplet'
+      responses:
+        '200':
+          description: Réussi
+  /exercices/{id}/next:
+    get:
+      summary: Prochain exercice
+      tags:
+        - Exercices
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+        - in: query
+          name: user
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: |
+            Prochain exercice
+
+            Il sera vide si l'étudiant a fini tout les exercices.
+
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exercice:
+                    nullable: true
+                    allOf:
+                      - $ref: '#/components/schemas/ExerciceModelePartiel'
+components:
+  schemas:
+    ExerciceModelePartiel:
+      type: object
+      properties:
+        id:
+          type: string
+          format: ObjectId
+          description: Id natif de Mongo-db
+          example: 507f1f77bcf86cd799439011
+        enonce:
+          type: string
+          description: Énoncé de l'exercice à réaliser
+          # format: markdown
+        difficulte:
+          type: integer
+          minimum: 1
+          maximum: 10
+        themes:
+          type: array
+          items:
+            type: string
+            format: keyword
+          description: Mots clés/étiquettes de l'exercice
+          example:
+            - boucle
+            - fonction
+            - condition
+            - trie
+        language:
+          type: string
+          example: C
+        tempsMoyen:
+          type: number
+          format: float
+          description: Le temps moyen estimé pour cette exerice
+        tempsMaximal:
+          type: number
+          format: float
+          description: Le temps maximal mis pour cette exercice
+    ExerciceModeleComplet:
+      allOf:
+        - $ref: '#/components/schemas/ExerciceModelePartiel'
+        - type: object
+          properties:
+            tests:
+              $ref: '#/components/schemas/Test'
+            correction:
+              type: string
+              description: Correction de l'exercice à réaliser
+            commentaire:
+              type: string
+              description: Commentaire sur la correction
+              example: Pour ce problème, il ne fallait pas utiliser le trie quicksort car il dégénère !
+            aides:
+              type: array
+              items:
+                type: string
+              description: Indice à donner à l'étudiant
+              example:
+                - Il faut d'abord trier la liste
+                - Vous devez utiliser la méthode sort
+            promotion:
+              type: string
+              pattern: 'L[123]|M[12]'
+              example: L3
+            auteurs:
+              type: array
+              items:
+                type: string
+                format: name
+              example:
+                - Stéphane Talbot
+                - Philippe Pernelle
+    Test:
+      description: Décris un jeu de test
+      type: array
+      items:
+        type: object
+        properties:
+          parametres:
+            type: array
+            items:
+              type: object
+          reponse:
+            type: object
+      

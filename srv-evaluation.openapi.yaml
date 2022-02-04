@@ -1,0 +1,46 @@
+openapi: 3.0.1
+info:
+  title: Service d'evaluation
+  description: il permet d'évaluer un exercice envoyé par l'élève.
+  version: 0.0.1
+
+paths:
+  /eval:
+    post:
+      summary: Récupère le code à évaluer.
+      description: l'exerciceComplet est un objet exercice géré par le service exercice. 
+      tags:
+        - Evaluation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                exerciceID:
+                  type: string
+                  format: ObjectId
+                reponseEtudiant:
+                  type: string
+      responses:
+        '200':
+          description: Réponse à l'evaluation de l'exercice. 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: integer
+                  validationExercice:
+                    type: string
+                    enum:
+                      - Ok
+                      - ErreurCompile
+                      - ErreurExecution
+                      - Faux
+                  log:
+                    type: string
