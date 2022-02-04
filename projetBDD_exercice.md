@@ -16,7 +16,7 @@
 **"tempsMaximal"**: "default integer (à définir)};  
 ,**"dataSet"**: [{"contexte":"string" ,"jeuxdetests" : [{"paramètres": "T[]", "resultat": "U"}]}]  
 **"correction"**: "string",  
-**"aides"**: "string [] ",   
+**"aides"**: "string [] ",  
 }  
 
 ### -> Types énumérés  
@@ -37,7 +37,8 @@ Difficulté = {
 **‘enonce’** : ‘ Vous avez n valeurs données en paramètre dans un tableau T. \n
 Ecrivez un programme calculant la moyenne de ces valeurs. \n
 Exemple : moyenne([1,2,3],3)\n
-		→ 2’\n,  
+		→ 2\n',
+**"template"**:'',  
 **‘commentaire’** : ‘ Cette fonction calcul la moyenne’,  
 **‘auteurs’** : [‘clement’,’romainN’],  
 **‘langage’** : ‘C’,  
@@ -50,7 +51,7 @@ Exemple : moyenne([1,2,3],3)\n
 				   {**'parametres‘**:'[1,2,3,4,5,7’]',**'resultat'** :’4’},
 				   {**'parametres'**,[-5,0,5,10,15]’, **'resultat'**:’10’}
 				   ]
-		}],
+		}],  
 **‘correction’** : ‘ int moyenne(int[] T,int n){
 			int res = 0;
 			for (int i =0 ;i<n ;i++) { res += T[i]};
