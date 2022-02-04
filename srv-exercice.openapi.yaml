@@ -126,8 +126,16 @@ components:
         - $ref: '#/components/schemas/ExerciceModelePartiel'
         - type: object
           properties:
-            tests:
-              $ref: '#/components/schemas/Test'
+            dataset:
+              type: array
+              items:
+                type: object
+                properties:
+                  contexte:
+                    type: string
+                    format: string
+                  jeuDeTests:
+                    $ref: '#/components/schemas/Test'
             correction:
               type: string
               description: Correction de l'exercice à réaliser
