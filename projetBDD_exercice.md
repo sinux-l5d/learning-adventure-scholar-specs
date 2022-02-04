@@ -4,9 +4,10 @@
 
 ## Template :
 {**"_id"** : "string",  
-**"nom"** : "string",
+**"nom"** : "string",  
 **"thèmes"**: "string[]",  
 **"énoncé"**: "string",  
+**"template"**: "string",  
 **"commentaire"**: "string",  
 **"auteurs"**: "string[]",  
 **"langage"**: "string",  
