@@ -1,14 +1,14 @@
 openapi: 3.0.1
+
 info:
-  title: Service d'evaluation
-  description: il permet d'évaluer un exercice envoyé par l'élève.
-  version: 0.0.1
+  title: LAWeb | Service d'evaluation
+  description: Permet d'évaluer le code d'un language par rapport à un exercice et répondre s'il est juste
+  version: 0.1.0
 
 paths:
   /eval:
     post:
-      summary: Récupère le code à évaluer.
-      description: l'exerciceComplet est un objet exercice géré par le service exercice. 
+      summary: Récupère le code à évaluer
       tags:
         - Evaluation
       requestBody:
@@ -23,8 +23,10 @@ paths:
                 exerciceID:
                   type: string
                   format: ObjectId
+                  description: ID de l'exercice dans la base exercice
                 reponseEtudiant:
                   type: string
+                  description: Code de l'étudiant
       responses:
         '200':
           description: Réponse à l'evaluation de l'exercice. 
@@ -44,3 +46,4 @@ paths:
                       - Faux
                   log:
                     type: string
+

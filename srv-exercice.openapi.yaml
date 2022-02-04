@@ -1,11 +1,14 @@
 openapi: 3.0.1
+
 info:
-  title: "LAWeb | Service d'exercice"
-  version: '0.1.0'
+  title: LAWeb | Service d'exercice
+  description: Permet de gérer des exercices et d'obtenir le suivant.
+  version: 0.1.0
+
 paths:
   /exercices:
     get:
-      summary: Listes des exercices existant
+      summary: Listes des exercices existants
       tags:
         - Exercices
       parameters:
@@ -68,7 +71,6 @@ paths:
             Prochain exercice
 
             Il sera vide si l'étudiant a fini tout les exercices.
-
           content:
             application/json:
               schema:
@@ -178,4 +180,4 @@ components:
               type: object
           reponse:
             type: object
-      
+
