@@ -4,6 +4,8 @@ info:
   title: LAWeb | Service d'evaluation
   description: Permet d'évaluer le code d'un language par rapport à un exercice et répondre s'il est juste
   version: 0.1.0
+  license:
+    name: MIT License
 
 paths:
   /eval:

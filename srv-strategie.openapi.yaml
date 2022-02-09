@@ -4,6 +4,8 @@ info:
   title: LAWeb | Service de stratégie
   description: Permet de définir l'ordre dans lequel les exercices sont fait. Peut dépendre du service résultat.
   version: 0.1.0
+  license:
+    name: MIT License
 
 paths:
   /next:
