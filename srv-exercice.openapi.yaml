@@ -55,6 +55,7 @@ paths:
                 $ref: '#/components/schemas/StandardError'
               example: { error: Exercices not found }
     post:
+      deprecated: true
       summary: Ajouter un exercices
       tags:
         - Exercices
@@ -256,7 +257,7 @@ components:
             commentaire:
               type: string
               description: Commentaire sur la correction
-              example: Pour ce problème, il ne fallait pas utiliser le trie quicksort car il dégénère !
+              example: Pour ce problème, il ne fallait pas utiliser le tri quicksort car il dégénère !
             aides:
               type: array
               items:
