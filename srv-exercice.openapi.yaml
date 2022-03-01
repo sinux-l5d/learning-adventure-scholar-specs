@@ -7,7 +7,12 @@ info:
   license:
     name: MIT License
 
+servers:
+  - url: http://127.0.0.1:3000
+    description: Serveur local
+
 paths:
+
   /exercices:
     get:
       summary: Listes des exercices existants
@@ -20,7 +25,10 @@ paths:
             type: array
             items:
               type: string
-              format: keyworkd
+              format: keyword
+          # https://stackoverflow.com/a/69889483
+          style: form
+          explode: true
         - in: query
           name: difficulte
           schema:
@@ -29,7 +37,7 @@ paths:
             maximum: 10
       responses:
         '200':
-          description: Réussi
+          description: Liste des exercices
           content:
             application/json:
               schema:
@@ -39,6 +47,13 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ExerciceModelePartiel'
+        '404':
+          description: Il n'y a pas d'exercice dans la base de données
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+              example: { error: Exercices not found }
     post:
       summary: Ajouter un exercices
       tags:
@@ -51,6 +66,89 @@ paths:
       responses:
         '200':
           description: Réussi
+
+  /exercices/one:
+    get:
+      summary: Renvoie un exercice aléatoire.
+      description: |
+        Renvoie un exercice aléatoire de la base de donnée.
+        
+        On peut appliquer des filtres optionnels.
+        Si le filtre n'existe pas, il est ignoré.
+      tags:
+        - Exercices
+      parameters:
+        - in: query
+          name: theme
+          schema:
+            type: array
+            items:
+              type: string
+              format: keyword
+          # https://stackoverflow.com/a/69889483
+          style: form
+          explode: true
+        - in: query
+          name: difficulte
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10
+      responses:
+        '200':
+          description: Liste des exercices
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exercice:
+                    $ref: '#/components/schemas/ExerciceModelePartiel'
+        '404':
+          description: Pas d'exercice correspondant aux critères
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+              examples:
+                FiltreValideValeurInvalide:
+                  value: { error: Exercices not found }
+            
+  /exercices/{id}:
+    get:
+      summary: Un exercice particulier
+      tags:
+        - Exercices
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+      responses:
+        '200':
+          description: |
+            L'exercice avec l'id demandé.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exercice:
+                    nullable: true
+                    allOf:
+                      - $ref: '#/components/schemas/ExerciceModeleComplet'
+        '404':
+          description: |
+            Si l'id n'est pas présent dans la bdd.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+              example: { error: Exercice not found }
+              
+  
   /exercices/{id}/next:
     get:
       summary: Prochain exercice
@@ -63,10 +161,6 @@ paths:
           schema:
             type: string
             format: ObjectId
-        - in: query
-          name: user
-          schema:
-            type: integer
       responses:
         '200':
           description: |
@@ -79,9 +173,22 @@ paths:
                 type: object
                 properties:
                   exercice:
+                    # Façon d'avoir un objet optionnel avec la version 3.0.1 d'OpenAPI
+                    # Plus prope en version supérieur avec oneOf null/object
                     nullable: true
-                    allOf:
+                    allOf: 
                       - $ref: '#/components/schemas/ExerciceModelePartiel'
+        '404':
+          description: |
+            Erreur de connexion avec le esrvice stratégie
+            
+            @todo : devras utiliser erreur 500, et erreur plus explicive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+              example: { error: "Not found: Error: connect ECONNREFUSED" }
+
 components:
   schemas:
     ExerciceModelePartiel:
@@ -182,4 +289,10 @@ components:
               type: object
           reponse:
             type: object
-
+    StandardError:
+      type: object
+      properties:
+        error:
+          type: string
+          format: string
+          example: La ressource n'a pas été trouvée
