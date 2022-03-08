@@ -7,12 +7,12 @@ info:
     name: MIT License
 
 paths:
-  /resultats:
+  /tentatives:
     post:
-      summary: Récupère les résultats renvoyé par le service évaluation.
+      summary: Récupère les tentatives renvoyées par le service évaluation.
 
       tags:
-        - Résultat
+        - Tentatives
       requestBody:
         required: true
         content:
@@ -32,6 +32,10 @@ paths:
                   type: boolean
                 date:
                   type: object
+                code:
+                  type: string
+                  format: code
+                
 
       responses:
         '200':
@@ -43,3 +47,76 @@ paths:
                 properties:
                   message:
                     type: string
+
+
+  /exercices:
+    post:
+      summary: récupère l'exercice commencé par un étudiant
+      tags:
+        - Exercices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExercicePourResultat'
+      responses:
+        '200':
+          description: Réussi
+
+
+components:
+  schemas:
+     
+    ExercicePourResultat:
+      type: object
+      properties:
+        idExo:
+          type: string
+          format: ObjectId
+          description: Id natif de Mongo-db
+          example: 507f1f77bcf86cd799439011
+        idEtu: 
+          type: string
+          format: string
+          example: 456qsd
+        idSession: 
+          type: string
+          format: string
+          example: 45sdf6sdf
+        nomExo:
+          type: string
+          format: string
+          example: boucle en C
+        nomSession:
+          type: string
+          format: string
+          example: L3 groupe 1 C
+        difficulte:
+          type: integer
+          minimum: 1
+          maximum: 10
+        themes:
+          type: array
+          items:
+            type: string
+            format: keyword
+          description: Mots clés/étiquettes de l'exercice
+          example:
+            - boucle
+            - fonction
+            - condition
+            - trie
+        language:
+          type: string
+          example: C
+        session:
+          type: string
+          example: L3 gp1 2022
+        tempsMoyen:
+          type: number
+          format: float
+          description: Le temps moyen estimé pour cette exerice
+        tempsMaximal:
+          type: number
+          format: float
+          description: Le temps maximal mis pour cette exercice
