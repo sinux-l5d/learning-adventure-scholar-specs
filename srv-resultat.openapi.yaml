@@ -18,24 +18,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                userId:
-                  type: integer
-                exoId:
-                  type: integer
-                reponseEtudiant:
-                  type: string
-                log:
-                  type: string
-                validationExercice:
-                  type: boolean
-                date:
-                  type: object
-                code:
-                  type: string
-                  format: code
-                
+              $ref: '#/components/schemas/EvaluationPourResultat'               
 
       responses:
         '200':
@@ -120,3 +103,37 @@ components:
           type: number
           format: float
           description: Le temps maximal mis pour cette exercice
+
+
+
+    EvaluationPourResultat:
+      type: object
+        properties:
+          idUser:
+            type: string
+            format: ObjectId
+            description: Id natif de Mongo-db
+            example: 507f1f77bcf86cd799439011 
+          idExo:
+            type: string
+            format: ObjectId
+            description: Id natif de Mongo-db
+            example: 507f1f77bcf86cd799439011
+          idSession : 
+            type: string
+            format: string
+            example: 45sdf6sdf
+          reponseEtudiant:
+            type: string
+            description : code écrit par l'étudiant
+            example : int a=1; for (int i=0 ; i<n;i++) {a=a*i;}
+          logErreurs:
+            type: string
+            description : message(s) d'erreur(s)
+            example : error segmentation ...
+          validationExercice:
+            type: boolean
+            description : vrai si l'exercice et réussi, faux sinon
+          dateSoumission :
+            type: date
+            description : date à laquelle le service évaluation à soumis sa réponse
