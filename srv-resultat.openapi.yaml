@@ -106,11 +106,11 @@ components:
     EvaluationPourResultat:
       type: object
       properties:
-        idUser:
+        idEtu:
           type: string
           format: ObjectId
           description: Id natif de Mongo-db
-          example: 507f1f77bcf86cd799439011 
+          example: 45fds4657dsffg56sg5d4cx2
         idExo:
           type: string
           format: ObjectId
@@ -132,5 +132,6 @@ components:
           type: boolean
           description : vrai si l'exercice et réussi, faux sinon
         dateSoumission :
-          type: date
+          type: string 
+          format: date-time
           description : date à laquelle le service évaluation à soumis sa réponse
