@@ -20,7 +20,7 @@ paths:
         - Exercices
       parameters:
         - in: query
-          name: theme
+          name: themes
           schema:
             type: array
             items:
@@ -80,7 +80,7 @@ paths:
         - Exercices
       parameters:
         - in: query
-          name: theme
+          name: themes
           schema:
             type: array
             items:
@@ -114,7 +114,7 @@ paths:
               examples:
                 FiltreValideValeurInvalide:
                   value: { error: Exercices not found }
-            
+
   /exercices/{id}:
     get:
       summary: Un exercice particulier
