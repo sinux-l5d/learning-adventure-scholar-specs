@@ -11,12 +11,12 @@ servers:
     description: Serveur local
 
 paths:
-  /resultats:
+  /tentatives:
     post:
-      summary: Récupère les résultats renvoyé par le service évaluation.
+      summary: Récupère les tentatives renvoyées par le service évaluation.
 
       tags:
-        - Résultat
+        - Tentatives
       requestBody:
         required: true
         content:
@@ -26,7 +26,7 @@ paths:
 
       responses:
         '200':
-          description: Réponse à la reception des résultats.
+          description: Réussi
           content:
             application/json:
               schema:
@@ -64,7 +64,7 @@ paths:
                   exercice:
                     allOf:
                       - $ref: '#/components/schemas/ExercicePourResultat'
-                      - type : object
+                      - type: object
                         properties:
                           estFini: 
                             type: boolean
@@ -164,7 +164,6 @@ components:
           type : string
           format : date-time
 
-
     EvaluationPourResultat:
       type: object
       properties:
@@ -178,21 +177,21 @@ components:
           format: ObjectId
           description: Id natif de Mongo-db
           example: 45fds4657dsffg56sg5d4cx2
-        idSession : 
+        idSession: 
           type: string
           format: string
           example: 623a34f35f35bcc5773e0445
         reponseEtudiant:
           type: string
-          description : code écrit par l'étudiant
-          example : int a=1; for (int i=0 ; i<n;i++) {a=a*i;}
+          description: code écrit par l'étudiant
+          example: int a=1; for (int i=0 ; i<n;i++) {a=a*i;}
         logErreurs:
           type: string
-          description : message(s) d'erreur(s)
-          example : error segmentation ...
+          description: message(s) d'erreur(s)
+          example: error segmentation ...
         validationExercice:
           type: boolean
-          description : vrai si l'exercice est réussi, faux sinon
+          description: vrai si l'exercice est réussi, faux sinon
           example: false
         dateSoumission :
           type: string 
@@ -216,4 +215,4 @@ components:
         dateSoumission :
           type: string 
           format: date-time
-          description : date à laquelle le service évaluation à soumis sa réponse
+          description: date à laquelle le service évaluation à soumis sa réponse
