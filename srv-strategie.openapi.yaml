@@ -10,6 +10,7 @@ info:
 paths:
   /next:
     post:
+      deprecated: true
       summary: Définir une stratégie et un ensemble d'exercices
       tags:
         - Stratégie
@@ -63,14 +64,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  next:
-                    type: string
-                    format: ObjectId
-                    nullable: true
-                    description: Id natif de Mongo-db
-                    example: 507f1f77bcf86cd799439011
+                $ref: '#/components/schemas/nextExo'
               examples:
                 prochain:
                   value: 
@@ -78,4 +72,14 @@ paths:
                 fin:
                   value:
                     next: null
-
+components:
+  schemas:
+    nextExo:
+      type: object
+      properties:
+        next:
+          type: string
+          format: ObjectId
+          nullable: true
+          description: Id natif de Mongo-db
+          example: 507f1f77bcf86cd799439011
