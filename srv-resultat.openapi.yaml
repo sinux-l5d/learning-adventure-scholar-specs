@@ -163,7 +163,7 @@ components:
           example : error segmentation ...
         validationExercice:
           type: boolean
-          description : vrai si l'exercice et réussi, faux sinon
+          description : vrai si l'exercice est réussi, faux sinon
         dateSoumission :
           type: string 
           format: date-time
