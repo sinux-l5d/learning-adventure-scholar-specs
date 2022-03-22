@@ -19,22 +19,8 @@ paths:
       tags:
         - Exercices
       parameters:
-        - in: query
-          name: theme
-          schema:
-            type: array
-            items:
-              type: string
-              format: keyword
-          # https://stackoverflow.com/a/69889483
-          style: form
-          explode: true
-        - in: query
-          name: difficulte
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 10
+        - $ref: '#/components/parameters/FilterTheme'
+        - $ref: '#/components/parameters/FilterDifficulte'
       responses:
         '200':
           description: Liste des exercices
@@ -190,7 +176,52 @@ paths:
                 $ref: '#/components/schemas/StandardError'
               example: { error: "Not found: Error: connect ECONNREFUSED" }
 
+  /session:
+    post:
+      deprecated: true
+      summary: Créer une nouvelle session, un ensemble d'exercices. WIP
+      tags:
+        - Sessions
+      parameters:
+        - in: query
+          name: search
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionModelePartiel'
+      responses:
+        '200':
+          description: Réussi
+      
+
+  /session/{id}:
+  /session/{idSession}/exercices:
+  /session/{idSession}/exercices/{idExercice}/next:
+
 components:
+  parameters:
+    FilterTheme:
+      in: query
+      name: theme
+      schema:
+        type: array
+        items:
+          type: string
+          format: keyword
+      # https://stackoverflow.com/a/69889483
+      style: form
+      explode: true
+    FilterDifficulte:
+      in: query
+      name: difficulte
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 10
   schemas:
     ExerciceModelePartiel:
       type: object
@@ -266,10 +297,6 @@ components:
               example:
                 - Il faut d'abord trier la liste
                 - Vous devez utiliser la méthode sort
-            promotion:
-              type: string
-              pattern: 'L[123]|M[12]'
-              example: L3
             auteurs:
               type: array
               items:
@@ -290,6 +317,10 @@ components:
               type: object
           reponse:
             type: object
+    SessionReq:
+      description: Décris la requête de création d'une session
+      type:
+
     StandardError:
       type: object
       properties:
