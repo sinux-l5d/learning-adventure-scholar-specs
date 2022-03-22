@@ -6,6 +6,10 @@ info:
   license:
     name: MIT License
 
+servers:
+  - url: http://127.0.0.1:3000
+    description: Serveur local
+
 paths:
   /tentatives:
     post:
@@ -18,7 +22,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EvaluationPourResultat'               
+              $ref: '#/components/schemas/EvaluationPourResultat'
 
       responses:
         '200':
@@ -29,14 +33,14 @@ paths:
                 type: object
                 properties:
                   tentative:
-                    allOf :
+                    allOf:
                       - $ref: '#/components/schemas/EvaluationPourResultat'
-                      - type : object
-                        properties :
-                          id : 
-                            type : string
-                            format : objectId
-                            example : 54f6sd5f75df3sdf
+                      - type: object
+                        properties:
+                          id: 
+                            type: string
+                            format: objectId
+                            example: 54f6sd5f75df3sdf
 
 
   /exercices:
@@ -58,17 +62,17 @@ paths:
                 type: object
                 properties:
                   exercice:
-                    allOf :
+                    allOf:
                       - $ref: '#/components/schemas/ExercicePourResultat'
-                      - type : object
-                        properties :
-                          estFini : 
-                            type : boolean
-                            example : false
-                          id : 
-                            type : string
-                            format : objectId
-                            example : 54f6sd5f75df3sdf
+                      - type: object
+                        properties:
+                          estFini: 
+                            type: boolean
+                            example: false
+                          id: 
+                            type: string
+                            format: objectId
+                            example: 623a41aecff8dcfdd896e978
     get:
       summary: Récupère tous les exercices de la base de donées résultat
       tags:
@@ -84,17 +88,17 @@ paths:
                   exercices:
                     type: array
                     items:
-                      allOf :
+                      allOf:
                         - $ref: '#/components/schemas/ExercicePourResultat'
-                        - type : object
-                          properties :
-                            estFini : 
-                              type : boolean
-                              example : false
-                            id : 
-                              type : string
-                              format : objectId
-                              example : 54f6sd5f75df3sdf
+                        - type: object
+                          properties:
+                            estFini: 
+                              type: boolean
+                              example: false
+                            id: 
+                              type: string
+                              format: objectId
+                              example: 54f6sd5f75df3sdf
 
 
 
@@ -111,11 +115,11 @@ components:
         idEtu: 
           type: string
           format: string
-          example: 456qsd
+          example: 45fds4657dsffg56sg5d4cx2
         idSession: 
           type: string
           format: string
-          example: 45sdf6sdf
+          example: 623a34f35f35bcc5773e0445
         nomExo:
           type: string
           format: string
@@ -160,40 +164,40 @@ components:
           type : string
           format : date-time
 
-
     EvaluationPourResultat:
       type: object
       properties:
-        idEtu:
-          type: string
-          format: ObjectId
-          description: Id natif de Mongo-db
-          example: 45fds4657dsffg56sg5d4cx2
         idExo:
           type: string
           format: ObjectId
           description: Id natif de Mongo-db
           example: 507f1f77bcf86cd799439011
-        idSession : 
+        idEtu:
+          type: string
+          format: ObjectId
+          description: Id natif de Mongo-db
+          example: 45fds4657dsffg56sg5d4cx2
+        idSession: 
           type: string
           format: string
-          example: 45sdf6sdf
+          example: 623a34f35f35bcc5773e0445
         reponseEtudiant:
           type: string
-          description : code écrit par l'étudiant
-          example : int a=1; for (int i=0 ; i<n;i++) {a=a*i;}
+          description: code écrit par l'étudiant
+          example: int a=1; for (int i=0 ; i<n;i++) {a=a*i;}
         logErreurs:
           type: string
-          description : message(s) d'erreur(s)
-          example : error segmentation ...
+          description: message(s) d'erreur(s)
+          example: error segmentation ...
         validationExercice:
           type: boolean
-          description : vrai si l'exercice est réussi, faux sinon
+          description: vrai si l'exercice est réussi, faux sinon
+          example: false
         dateSoumission :
           type: string 
           format: date-time
           description : date à laquelle le service évaluation à soumis sa réponse
-          
+
     Tentative:
       type: object
       properties:
@@ -211,4 +215,4 @@ components:
         dateSoumission :
           type: string 
           format: date-time
-          description : date à laquelle le service évaluation à soumis sa réponse
+          description: date à laquelle le service évaluation à soumis sa réponse

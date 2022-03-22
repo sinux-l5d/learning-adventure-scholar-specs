@@ -3,7 +3,7 @@ openapi: 3.0.1
 info:
   title: LAWeb | Service d'exercice
   description: Permet de gérer des exercices et d'obtenir le suivant.
-  version: 0.1.0
+  version: 0.2.0
   license:
     name: MIT License
 
@@ -20,7 +20,7 @@ paths:
         - Exercices
       parameters:
         - in: query
-          name: theme
+          name: themes
           schema:
             type: array
             items:
@@ -46,7 +46,7 @@ paths:
                   exercices:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ExerciceModelePartiel'
+                      $ref: '#/components/schemas/ExerciceModeleComplet'
         '404':
           description: Il n'y a pas d'exercice dans la base de données
           content:
@@ -55,7 +55,6 @@ paths:
                 $ref: '#/components/schemas/StandardError'
               example: { error: Exercices not found }
     post:
-      deprecated: true
       summary: Ajouter un exercices
       tags:
         - Exercices
@@ -63,7 +62,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExerciceModeleComplet'
+              type: array
+              items:
+                $ref: '#/components/schemas/ExerciceModeleCompletSansId'
       responses:
         '200':
           description: Réussi
@@ -80,7 +81,7 @@ paths:
         - Exercices
       parameters:
         - in: query
-          name: theme
+          name: themes
           schema:
             type: array
             items:
@@ -104,7 +105,7 @@ paths:
                 type: object
                 properties:
                   exercice:
-                    $ref: '#/components/schemas/ExerciceModelePartiel'
+                    $ref: '#/components/schemas/ExerciceModeleComplet'
         '404':
           description: Pas d'exercice correspondant aux critères
           content:
@@ -114,7 +115,7 @@ paths:
               examples:
                 FiltreValideValeurInvalide:
                   value: { error: Exercices not found }
-            
+
   /exercices/{id}:
     get:
       summary: Un exercice particulier
@@ -178,7 +179,7 @@ paths:
                     # Plus prope en version supérieur avec oneOf null/object
                     nullable: true
                     allOf: 
-                      - $ref: '#/components/schemas/ExerciceModelePartiel'
+                      - $ref: '#/components/schemas/ExerciceModeleComplet'
         '404':
           description: |
             Erreur de connexion avec le esrvice stratégie
@@ -192,20 +193,23 @@ paths:
 
 components:
   schemas:
-    ExerciceModelePartiel:
+    ExerciceModeleCompletSansId:
+      required:
+        - nom
+        - themes
+        - langage
+        - correction
+        - auteurs
+
       type: object
       properties:
-        id:
-          type: string
-          format: ObjectId
-          description: Id natif de Mongo-db
-          example: 507f1f77bcf86cd799439011
         nom:
           type: string
           format: string
         template:
           type: string
           format: string
+          description: Template de l'exercice à compléter
         enonce:
           type: string
           description: Énoncé de l'exercice à réaliser
@@ -225,59 +229,64 @@ components:
             - fonction
             - condition
             - trie
-        language:
+        langage:
           type: string
           example: C
         tempsMoyen:
           type: number
           format: float
           description: Le temps moyen estimé pour cette exerice
-        tempsMaximal:
+        tempsMaximum:
           type: number
           format: float
           description: Le temps maximal mis pour cette exercice
+        dataset:
+          type: array
+          items:
+            type: object
+            properties:
+              contexte:
+                type: string
+                format: string
+              jeuDeTests:
+                $ref: '#/components/schemas/Test'
+        correction:
+          type: string
+          description: Correction de l'exercice à réaliser
+        commentaire:
+          type: string
+          description: Commentaire sur la correction
+          example: Pour ce problème, il ne fallait pas utiliser le tri quicksort car il dégénère !
+        aides:
+          type: array
+          items:
+            type: string
+          description: Indice à donner à l'étudiant
+          example:
+            - Il faut d'abord trier la liste
+            - Vous devez utiliser la méthode sort
+        auteurs:
+          type: array
+          items:
+            type: string
+            format: name
+          example:
+            - Stéphane Talbot
+            - Philippe Pernelle
+        session:
+          type: string
+          format: string
+          description: Pas encore prévu!
     ExerciceModeleComplet:
       allOf:
-        - $ref: '#/components/schemas/ExerciceModelePartiel'
+        - $ref: '#/components/schemas/ExerciceModeleCompletSansId'
         - type: object
           properties:
-            dataset:
-              type: array
-              items:
-                type: object
-                properties:
-                  contexte:
-                    type: string
-                    format: string
-                  jeuDeTests:
-                    $ref: '#/components/schemas/Test'
-            correction:
+            id:
               type: string
-              description: Correction de l'exercice à réaliser
-            commentaire:
-              type: string
-              description: Commentaire sur la correction
-              example: Pour ce problème, il ne fallait pas utiliser le tri quicksort car il dégénère !
-            aides:
-              type: array
-              items:
-                type: string
-              description: Indice à donner à l'étudiant
-              example:
-                - Il faut d'abord trier la liste
-                - Vous devez utiliser la méthode sort
-            promotion:
-              type: string
-              pattern: 'L[123]|M[12]'
-              example: L3
-            auteurs:
-              type: array
-              items:
-                type: string
-                format: name
-              example:
-                - Stéphane Talbot
-                - Philippe Pernelle
+              format: ObjectId
+              description: Id natif de Mongo-db
+              example: 507f1f77bcf86cd799439011
     Test:
       description: Décris un jeu de test
       type: array
