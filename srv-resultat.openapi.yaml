@@ -7,39 +7,183 @@ info:
     name: MIT License
 
 paths:
-  /resultats:
+  /tentatives:
     post:
-      summary: Récupère les résultats renvoyé par le service évaluation.
+      summary: Récupère les tentatives renvoyées par le service évaluation.
 
       tags:
-        - Résultat
+        - Tentatives
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                userId:
-                  type: integer
-                exoId:
-                  type: integer
-                reponseEtudiant:
-                  type: string
-                log:
-                  type: string
-                validationExercice:
-                  type: boolean
-                date:
-                  type: object
+              $ref: '#/components/schemas/EvaluationPourResultat'               
 
       responses:
         '200':
-          description: Réponse à la reception des résultats.
+          description: Réussi
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
+                  tentative:
+                    allOf :
+                      - $ref: '#/components/schemas/EvaluationPourResultat'
+                      - type : object
+                        properties :
+                          id : 
+                            type : string
+                            format : objectId
+                            example : 54f6sd5f75df3sdf
+
+
+  /exercices:
+    post:
+      summary: récupère l'exercice commencé par un étudiant
+      tags:
+        - Exercices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExercicePourResultat'
+      responses:
+        '200':
+          description: Réussi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exercice:
+                    allOf :
+                      - $ref: '#/components/schemas/ExercicePourResultat'
+                      - type : object
+                        properties :
+                          estFini : 
+                            type : boolean
+                            example : false
+                          id : 
+                            type : string
+                            format : objectId
+                            example : 54f6sd5f75df3sdf
+                  
+                    
+
+
+components:
+  schemas: 
+    ExercicePourResultat:
+      type: object
+      properties:
+        idExo:
+          type: string
+          format: ObjectId
+          description: Id natif de Mongo-db
+          example: 507f1f77bcf86cd799439011
+        idEtu: 
+          type: string
+          format: string
+          example: 456qsd
+        idSession: 
+          type: string
+          format: string
+          example: 45sdf6sdf
+        nomExo:
+          type: string
+          format: string
+          example: boucle en C
+        nomSession:
+          type: string
+          format: string
+          example: L3 groupe 1 C
+        difficulte:
+          type: integer
+          minimum: 1
+          maximum: 10
+        themes:
+          type: array
+          items:
+            type: string
+            format: keyword
+          description: Mots clés/étiquettes de l'exercice
+          example:
+            - boucle
+            - fonction
+            - condition
+            - trie
+        langage:
+          type: string
+          example: C
+        tempsMoyen:
+          type: number
+          format: float
+          description: Le temps moyen estimé pour cette exerice
+        tempsMaximum:
+          type: number
+          format: float
+          description: Le temps maximum mis pour cette exercice
+        tentatives :
+          type : array
+          items :
+            $ref: '#/components/schemas/Tentative'
+          example : []
+          description : le code de l'étudiant avec ses logs d'erreur
+        debut :
+          type : string
+          format : date-time
+
+
+    EvaluationPourResultat:
+      type: object
+      properties:
+        idEtu:
+          type: string
+          format: ObjectId
+          description: Id natif de Mongo-db
+          example: 45fds4657dsffg56sg5d4cx2
+        idExo:
+          type: string
+          format: ObjectId
+          description: Id natif de Mongo-db
+          example: 507f1f77bcf86cd799439011
+        idSession : 
+          type: string
+          format: string
+          example: 45sdf6sdf
+        reponseEtudiant:
+          type: string
+          description : code écrit par l'étudiant
+          example : int a=1; for (int i=0 ; i<n;i++) {a=a*i;}
+        logErreurs:
+          type: string
+          description : message(s) d'erreur(s)
+          example : error segmentation ...
+        validationExercice:
+          type: boolean
+          description : vrai si l'exercice est réussi, faux sinon
+        dateSoumission :
+          type: string 
+          format: date-time
+          description : date à laquelle le service évaluation à soumis sa réponse
+          
+    Tentative:
+      type: object
+      properties:
+        reponseEtudiant:
+          type: string
+          description : code écrit par l'étudiant
+          example : int a=1; for (int i=0 ; i<n;i++) {a=a*i;}
+        logErreurs:
+          type: string
+          description : message(s) d'erreur(s)
+          example : error segmentation ...
+        validationExercice:
+          type: boolean
+          description : vrai si l'exercice et réussi, faux sinon
+        dateSoumission :
+          type: string 
+          format: date-time
+          description : date à laquelle le service évaluation à soumis sa réponse
