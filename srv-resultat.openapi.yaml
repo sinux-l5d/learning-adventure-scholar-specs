@@ -22,14 +22,21 @@ paths:
 
       responses:
         '200':
-          description: Réponse à la reception des résultats.
+          description: Réussi
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
+                  tentative:
+                    allOf :
+                      - $ref: '#/components/schemas/EvaluationPourResultat'
+                      - type : object
+                        properties :
+                          id : 
+                            type : string
+                            format : objectId
+                            example : 54f6sd5f75df3sdf
 
 
   /exercices:
@@ -45,6 +52,25 @@ paths:
       responses:
         '200':
           description: Réussi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exercice:
+                    allOf :
+                      - $ref: '#/components/schemas/ExercicePourResultat'
+                      - type : object
+                        properties :
+                          estFini : 
+                            type : boolean
+                            example : false
+                          id : 
+                            type : string
+                            format : objectId
+                            example : 54f6sd5f75df3sdf
+                  
+                    
 
 
 components:
@@ -88,20 +114,27 @@ components:
             - fonction
             - condition
             - trie
-        language:
+        langage:
           type: string
           example: C
-        session:
-          type: string
-          example: L3 gp1 2022
         tempsMoyen:
           type: number
           format: float
           description: Le temps moyen estimé pour cette exerice
-        tempsMaximal:
+        tempsMaximum:
           type: number
           format: float
-          description: Le temps maximal mis pour cette exercice
+          description: Le temps maximum mis pour cette exercice
+        tentatives :
+          type : array
+          items :
+            $ref: '#/components/schemas/Tentative'
+          example : []
+          description : le code de l'étudiant avec ses logs d'erreur
+        debut :
+          type : string
+          format : date-time
+
 
     EvaluationPourResultat:
       type: object
@@ -120,6 +153,25 @@ components:
           type: string
           format: string
           example: 45sdf6sdf
+        reponseEtudiant:
+          type: string
+          description : code écrit par l'étudiant
+          example : int a=1; for (int i=0 ; i<n;i++) {a=a*i;}
+        logErreurs:
+          type: string
+          description : message(s) d'erreur(s)
+          example : error segmentation ...
+        validationExercice:
+          type: boolean
+          description : vrai si l'exercice et réussi, faux sinon
+        dateSoumission :
+          type: string 
+          format: date-time
+          description : date à laquelle le service évaluation à soumis sa réponse
+          
+    Tentative:
+      type: object
+      properties:
         reponseEtudiant:
           type: string
           description : code écrit par l'étudiant
