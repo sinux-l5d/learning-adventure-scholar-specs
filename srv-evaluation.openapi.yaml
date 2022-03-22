@@ -1,0 +1,51 @@
+openapi: 3.0.1
+
+info:
+  title: LAWeb | Service d'evaluation
+  description: Permet d'évaluer le code d'un language par rapport à un exercice et répondre s'il est juste
+  version: 0.1.0
+  license:
+    name: MIT License
+
+paths:
+  /eval:
+    post:
+      summary: Récupère le code à évaluer
+      tags:
+        - Evaluation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                exerciceID:
+                  type: string
+                  format: ObjectId
+                  description: ID de l'exercice dans la base exercice
+                reponseEtudiant:
+                  type: string
+                  description: Code de l'étudiant
+      responses:
+        '200':
+          description: Réponse à l'evaluation de l'exercice. 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: integer
+                  validationExercice:
+                    type: string
+                    enum:
+                      - Ok
+                      - ErreurCompile
+                      - ErreurExecution
+                      - Faux
+                  log:
+                    type: string
+
