@@ -41,7 +41,7 @@ paths:
 
   /exercices:
     post:
-      summary: récupère l'exercice commencé par un étudiant
+      summary: récupère la tentative fait par un étudiant
       tags:
         - Exercices
       requestBody:
@@ -69,8 +69,33 @@ paths:
                             type : string
                             format : objectId
                             example : 54f6sd5f75df3sdf
-                  
-                    
+    get:
+      summary: Récupère tous les exercices de la base de donées résultat
+      tags:
+        - Exercices
+      responses:
+        '200':
+          description: Réussi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  exercices:
+                    type: array
+                    items:
+                      allOf :
+                        - $ref: '#/components/schemas/ExercicePourResultat'
+                        - type : object
+                          properties :
+                            estFini : 
+                              type : boolean
+                              example : false
+                            id : 
+                              type : string
+                              format : objectId
+                              example : 54f6sd5f75df3sdf
+
 
 
 components:
