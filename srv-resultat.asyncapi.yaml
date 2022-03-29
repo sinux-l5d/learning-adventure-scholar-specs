@@ -6,7 +6,7 @@ info:
 channels:
   exercices:
     subscribe:
-      summary: Préviens l'IHM qu'un étudiant a commencer un nouvelle exercice
+      summary: Préviens l'IHM qu'un étudiant a commencé un nouvel exercice
       message:
         $ref: '#/components/messages/etudiantCommenceExo'
   tentatives:
@@ -75,11 +75,11 @@ components:
         tempsMoyen:
           type: number
           format: float
-          description: Le temps moyen estimé pour cette exerice
+          description: Le temps moyen estimé pour cet exerice
         tempsMaximal:
           type: number
           format: float
-          description: Le temps maximal mis pour cette exercice
+          description: Le temps maximal mis pour cet exercice
     newAttemptPayload:
       type: object
       properties:
