@@ -45,7 +45,7 @@ paths:
 
   /exercices:
     post:
-      summary: récupère la tentative fait par un étudiant
+      summary: récupère la tentative faite par un étudiant
       tags:
         - Exercices
       requestBody:

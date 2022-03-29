@@ -55,7 +55,7 @@ paths:
                 $ref: '#/components/schemas/StandardError'
               example: { error: Exercices not found }
     post:
-      summary: Ajouter un exercices
+      summary: Ajouter un exercice
       tags:
         - Exercices
       requestBody:
@@ -168,7 +168,7 @@ paths:
           description: |
             Prochain exercice
 
-            Il sera vide si l'étudiant a fini tout les exercices.
+            Il sera vide si l'étudiant a fini tous les exercices.
           content:
             application/json:
               schema:
@@ -235,11 +235,11 @@ components:
         tempsMoyen:
           type: number
           format: float
-          description: Le temps moyen estimé pour cette exerice
+          description: Le temps moyen estimé pour cet exerice
         tempsMaximum:
           type: number
           format: float
-          description: Le temps maximal mis pour cette exercice
+          description: Le temps maximal mis pour cet exercice
         dataset:
           type: array
           items:
@@ -288,7 +288,7 @@ components:
               description: Id natif de Mongo-db
               example: 507f1f77bcf86cd799439011
     Test:
-      description: Décris un jeu de test
+      description: Décrit un jeu de test
       type: array
       items:
         type: object
