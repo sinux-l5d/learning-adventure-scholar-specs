@@ -83,18 +83,20 @@ components:
     newAttemptPayload:
       type: object
       properties:
-        userId:
-          type: integer
-        exoId:
-          type: integer
-        reponseEtudiant:
+        idExo:
           type: string
-        log:
+          format: ObjectId
+          description: Id natif de Mongo-db
+          example: 507f1f77bcf86cd799439011
+        idEtu: 
           type: string
+          format: string
+          example: 456qsd
         validationExercice:
           type: boolean
-        date:
-          type: object
-        code:
+        logErreurs:
           type: string
-          format: code
+        dateSoumission:
+          type: object
+        reponseEtudiant:
+          type: string
