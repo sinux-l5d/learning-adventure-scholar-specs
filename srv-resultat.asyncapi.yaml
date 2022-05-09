@@ -1,0 +1,102 @@
+asyncapi: '2.3.0'
+info:
+  title: Requêtes asynchrone du service Résultat
+  version: 0.1.0
+  description: Les différentes requêtes utilisant des WebSockets du service Résultat.
+channels:
+  exercices:
+    subscribe:
+      summary: Préviens l'IHM qu'un étudiant a commencé un nouvel exercice
+      message:
+        $ref: '#/components/messages/etudiantCommenceExo'
+  tentatives:
+    subscribe:
+      summary: Préviens l'IHM qu'un étudiant a fait une nouvelle tentative sur un exercice
+      message:
+        $ref: '#/components/messages/etudiantFaitNouvelleTentative'
+components:
+  messages:
+    etudiantCommenceExo:
+      name: etudiantCommenceExo
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/newExercicePayload'
+    etudiantFaitNouvelleTentative:
+      name: etudiantFaitNouvelleTentative
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/newAttemptPayload'
+  schemas:
+    newExercicePayload:
+      type: object
+      properties:
+        idExo:
+          type: string
+          format: ObjectId
+          description: Id natif de Mongo-db
+          example: 507f1f77bcf86cd799439011
+        idEtu: 
+          type: string
+          format: string
+          example: 456qsd
+        idSession: 
+          type: string
+          format: string
+          example: 45sdf6sdf
+        nomExo:
+          type: string
+          format: string
+          example: boucle en C
+        nomSession:
+          type: string
+          format: string
+          example: L3 groupe 1 C
+        difficulte:
+          type: integer
+          minimum: 1
+          maximum: 10
+        themes:
+          type: array
+          items:
+            type: string
+            format: keyword
+          description: Mots clés/étiquettes de l'exercice
+          example:
+            - boucle
+            - fonction
+            - condition
+            - trie
+        language:
+          type: string
+          example: C
+        session:
+          type: string
+          example: L3 gp1 2022
+        tempsMoyen:
+          type: number
+          format: float
+          description: Le temps moyen estimé pour cet exerice
+        tempsMaximal:
+          type: number
+          format: float
+          description: Le temps maximal mis pour cet exercice
+    newAttemptPayload:
+      type: object
+      properties:
+        idExo:
+          type: string
+          format: ObjectId
+          description: Id natif de Mongo-db
+          example: 507f1f77bcf86cd799439011
+        idEtu: 
+          type: string
+          format: string
+          example: 456qsd
+        validationExercice:
+          type: boolean
+        logErreurs:
+          type: string
+        dateSoumission:
+          type: object
+        reponseEtudiant:
+          type: string

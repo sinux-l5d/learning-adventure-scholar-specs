@@ -3,7 +3,7 @@ openapi: 3.0.1
 info:
   title: LAWeb | Service d'exercice
   description: Permet de gérer des exercices et d'obtenir le suivant.
-  version: 0.1.0
+  version: 0.2.0
   license:
     name: MIT License
 
@@ -32,7 +32,7 @@ paths:
                   exercices:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ExerciceModelePartiel'
+                      $ref: '#/components/schemas/ExerciceModeleComplet'
         '404':
           description: Il n'y a pas d'exercice dans la base de données
           content:
@@ -41,15 +41,16 @@ paths:
                 $ref: '#/components/schemas/StandardError'
               example: { error: Exercices not found }
     post:
-      deprecated: true
-      summary: Ajouter un exercices
+      summary: Ajouter un exercice
       tags:
         - Exercices
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExerciceModeleComplet'
+              type: array
+              items:
+                $ref: '#/components/schemas/ExerciceModeleCompletSansId'
       responses:
         '200':
           description: Réussi
@@ -65,22 +66,8 @@ paths:
       tags:
         - Exercices
       parameters:
-        - in: query
-          name: theme
-          schema:
-            type: array
-            items:
-              type: string
-              format: keyword
-          # https://stackoverflow.com/a/69889483
-          style: form
-          explode: true
-        - in: query
-          name: difficulte
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 10
+        - $ref: '#/components/parameters/FilterTheme'
+        - $ref: '#/components/parameters/FilterDifficulte'
       responses:
         '200':
           description: Liste des exercices
@@ -90,7 +77,7 @@ paths:
                 type: object
                 properties:
                   exercice:
-                    $ref: '#/components/schemas/ExerciceModelePartiel'
+                    $ref: '#/components/schemas/ExerciceModeleComplet'
         '404':
           description: Pas d'exercice correspondant aux critères
           content:
@@ -100,7 +87,7 @@ paths:
               examples:
                 FiltreValideValeurInvalide:
                   value: { error: Exercices not found }
-            
+
   /exercices/{id}:
     get:
       summary: Un exercice particulier
@@ -153,7 +140,7 @@ paths:
           description: |
             Prochain exercice
 
-            Il sera vide si l'étudiant a fini tout les exercices.
+            Il sera vide si l'étudiant a fini tous les exercices.
           content:
             application/json:
               schema:
@@ -164,7 +151,7 @@ paths:
                     # Plus prope en version supérieur avec oneOf null/object
                     nullable: true
                     allOf: 
-                      - $ref: '#/components/schemas/ExerciceModelePartiel'
+                      - $ref: '#/components/schemas/ExerciceModeleComplet'
         '404':
           description: |
             Erreur de connexion avec le esrvice stratégie
@@ -178,8 +165,7 @@ paths:
 
   /session:
     post:
-      deprecated: true
-      summary: Créer une nouvelle session, un ensemble d'exercices. WIP
+      summary: Créer une nouvelle session, composée d'exercices et de séances
       tags:
         - Sessions
       parameters:
@@ -192,15 +178,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SessionModelePartiel'
+              $ref: '#/components/schemas/SessionModeleReq'
       responses:
         '200':
           description: Réussi
-      
 
-  /session/{id}:
-  /session/{idSession}/exercices:
-  /session/{idSession}/exercices/{idExercice}/next:
+  # /session/{id}:
+  # /session/{idSession}/exercices:
+  # /session/{idSession}/exercices/{idExercice}/next:
 
 components:
   parameters:
@@ -223,20 +208,23 @@ components:
         minimum: 1
         maximum: 10
   schemas:
-    ExerciceModelePartiel:
+    ExerciceModeleCompletSansId:
+      required:
+        - nom
+        - themes
+        - langage
+        - correction
+        - auteurs
+
       type: object
       properties:
-        id:
-          type: string
-          format: ObjectId
-          description: Id natif de Mongo-db
-          example: 507f1f77bcf86cd799439011
         nom:
           type: string
           format: string
         template:
           type: string
           format: string
+          description: Template de l'exercice à compléter
         enonce:
           type: string
           description: Énoncé de l'exercice à réaliser
@@ -256,57 +244,66 @@ components:
             - fonction
             - condition
             - trie
-        language:
+        langage:
           type: string
           example: C
         tempsMoyen:
           type: number
           format: float
-          description: Le temps moyen estimé pour cette exerice
-        tempsMaximal:
+          description: Le temps moyen estimé pour cet exerice
+        tempsMaximum:
           type: number
           format: float
-          description: Le temps maximal mis pour cette exercice
+          description: Le temps maximal mis pour cet exercice
+        dataset:
+          type: array
+          items:
+            type: object
+            properties:
+              contexte:
+                type: string
+                format: string
+              jeuDeTests:
+                $ref: '#/components/schemas/Test'
+        correction:
+          type: string
+          description: Correction de l'exercice à réaliser
+        commentaire:
+          type: string
+          description: Commentaire sur la correction
+          example: Pour ce problème, il ne fallait pas utiliser le tri quicksort car il dégénère !
+        aides:
+          type: array
+          items:
+            type: string
+          description: Indice à donner à l'étudiant
+          example:
+            - Il faut d'abord trier la liste
+            - Vous devez utiliser la méthode sort
+        auteurs:
+          type: array
+          items:
+            type: string
+            format: name
+          example:
+            - Stéphane Talbot
+            - Philippe Pernelle
+        session:
+          type: string
+          format: string
+          description: Pas encore prévu!
     ExerciceModeleComplet:
       allOf:
-        - $ref: '#/components/schemas/ExerciceModelePartiel'
+        - $ref: '#/components/schemas/ExerciceModeleCompletSansId'
         - type: object
           properties:
-            dataset:
-              type: array
-              items:
-                type: object
-                properties:
-                  contexte:
-                    type: string
-                    format: string
-                  jeuDeTests:
-                    $ref: '#/components/schemas/Test'
-            correction:
+            id:
               type: string
-              description: Correction de l'exercice à réaliser
-            commentaire:
-              type: string
-              description: Commentaire sur la correction
-              example: Pour ce problème, il ne fallait pas utiliser le tri quicksort car il dégénère !
-            aides:
-              type: array
-              items:
-                type: string
-              description: Indice à donner à l'étudiant
-              example:
-                - Il faut d'abord trier la liste
-                - Vous devez utiliser la méthode sort
-            auteurs:
-              type: array
-              items:
-                type: string
-                format: name
-              example:
-                - Stéphane Talbot
-                - Philippe Pernelle
+              format: ObjectId
+              description: Id natif de Mongo-db
+              example: 507f1f77bcf86cd799439011
     Test:
-      description: Décris un jeu de test
+      description: Décrit un jeu de test
       type: array
       items:
         type: object
@@ -317,9 +314,33 @@ components:
               type: object
           reponse:
             type: object
-    SessionReq:
+    SessionModeleReq:
       description: Décris la requête de création d'une session
-      type:
+      type: object
+      properties:
+        strategie:
+          type: string
+          example: lineaire
+        nom:
+          type: string
+          example: Découverte des pointeurs en C
+        seances:
+          type: array
+          items:
+            type: object
+            properties:
+              groupe:
+                type: string
+              date:
+                type: string
+                format: datetime
+        
+      required:
+        - strategie
+        - nom
+        
+          
+      # type:
 
     StandardError:
       type: object
