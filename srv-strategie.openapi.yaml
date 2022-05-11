@@ -10,8 +10,7 @@ info:
 paths:
   /next:
     post:
-      deprecated: true
-      summary: Définir une stratégie et un ensemble d'exercices
+      summary: Retourne l'exercice suivant
       tags:
         - Stratégie
       requestBody:
@@ -20,66 +19,28 @@ paths:
             schema:
               type: object
               properties:
-                exerices:
-                  type: array
-                  items:
-                    type: string
-                    format: ObjectId
-                    description: Id natif de Mongo-db
-                    example: 507f1f77bcf86cd799439011
-                  example:
-                    - 507f1f77bcf86cd799439011
-                    - 5a2493c33c95a1281836eb6a
-                    - 61edc6938c57b58baa85d7c9
                 strategie:
-                  description: >
-                    Ordre des exercices: 
-                      * `lineaire` - Ordre de la liste envoyée
-                      * `meilleurgagne` - Du plus facile au plus difficile
                   type: string
                   enum:
                     - lineaire
-                    - meilleurgagne
+                  description: |
+                    Nom de la stratégie
+                    * `lineaire` - Stragégie lineaire
+                exerciceCourant:
+                  type: string
+                  format: ObjectId
+                exercices:
+                  type: array
+                  items:
+                    $ref: './srv-exercice.openapi.yaml#/components/schemas/ExerciceModeleComplet'
       responses:
         '200':
-          description: Réussi
-  /next/{id}:
-    get:
-      summary: Prochain exercice
-      tags:
-        - Stratégie
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-            format: ObjectId
-      responses:
-        '200':
-          description: |
-            Prochain exercice
-
-            Il sera vide s'il n'y a plus d'exercices.
+          description: Exercice suivant
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/nextExo'
-              examples:
-                prochain:
-                  value: 
-                    next: 61edc6938c57b58baa85d7c9
-                fin:
-                  value:
-                    next: null
-components:
-  schemas:
-    nextExo:
-      type: object
-      properties:
-        next:
-          type: string
-          format: ObjectId
-          nullable: true
-          description: Id natif de Mongo-db
-          example: 507f1f77bcf86cd799439011
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: ObjectId
