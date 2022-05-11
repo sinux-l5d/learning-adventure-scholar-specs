@@ -110,6 +110,7 @@ paths:
                 type: object
                 properties:
                   exercice:
+                    # Façon de mettre un object optionnel avec OpenAPI 3.0.1
                     nullable: true
                     allOf:
                       - $ref: '#/components/schemas/ExerciceModeleComplet'
@@ -126,6 +127,7 @@ paths:
   /exercices/{id}/next:
     get:
       summary: Prochain exercice
+      description: Appele le service stratégie pour obtenir le prochain exercice
       tags:
         - Exercices
       parameters:
@@ -165,9 +167,15 @@ paths:
 
   /sessions:
     post:
-      summary: Créer une nouvelle session, composée d'exercices et de séances
+      summary: Créer une session
+      description: | 
+        Créer une nouvelle session, composée d'exercices et de séances.
+
+        `exercices` doit être un tableau d'`ObjectId` correspondant à des exercices.
       tags:
         - Sessions
+      parameters:
+        - $ref: '#/components/parameters/PopulateSession'
       requestBody:
         content:
           application/json:
@@ -176,6 +184,10 @@ paths:
       responses:
         '200':
           description: Réussi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionModeleComplet'
 
     get:
       summary: Liste des sessions
@@ -239,6 +251,7 @@ paths:
           schema:
             type: string
             format: ObjectId
+        - $ref: '#/components/parameters/PopulateSession'
       responses:
         '200':
           description: Liste des exercices de la session
@@ -259,6 +272,7 @@ paths:
   /sessions/{idSession}/exercices/{idExercice}/next:
     get:
       summary: Prochain exercice
+      description: Appele le service stratégie pour obtenir le prochain exercice
       tags:
         - Sessions
       parameters:
