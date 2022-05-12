@@ -292,11 +292,15 @@ paths:
           description: Un ObjectId ou "init" pour le premier exercice de la session.
       responses:
         '200':
-          description: Prochain exercice
+          description: | 
+            Renvoie le prochain exercice, ou un objet vide si c'était le dernier exercice de la session.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExerciceModeleComplet'
+                # objet optionnel
+                nullable: true
+                allOf:
+                - $ref: '#/components/schemas/ExerciceModeleComplet'
 
         
 

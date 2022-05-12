@@ -35,12 +35,15 @@ paths:
                     $ref: './srv-exercice.openapi.yaml#/components/schemas/ExerciceModeleComplet'
       responses:
         '200':
-          description: Exercice suivant
+          description: | 
+            Renvoie l'exercice suivant, ou un objet vide s'il n'y a plus d'exercice.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    format: ObjectId
+                nullable: true
+                allOf:
+                - type: object
+                  properties:
+                    id:
+                      type: string
+                      format: ObjectId
