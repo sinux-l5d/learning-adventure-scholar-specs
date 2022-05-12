@@ -413,10 +413,6 @@ components:
           example:
             - Stéphane Talbot
             - Philippe Pernelle
-        session:
-          type: string
-          format: string
-          description: Pas encore prévu!
     ExerciceModeleComplet:
       allOf:
         - $ref: '#/components/schemas/ExerciceModeleCompletSansId'
