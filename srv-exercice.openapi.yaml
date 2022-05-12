@@ -457,7 +457,7 @@ components:
                 format: datetime
             example:
               groupe: "1"
-              date: 2020-01-01T00:08:00.000Z
+              date: "2020-01-01T00:08:00.000Z"
         exercices:
           type: array
           items:
