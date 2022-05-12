@@ -128,6 +128,7 @@ paths:
     get:
       summary: Prochain exercice
       description: Appele le service stratégie pour obtenir le prochain exercice
+      deprecated: true
       tags:
         - Exercices
       parameters:
@@ -288,6 +289,7 @@ paths:
           schema:
             type: string
             format: ObjectId
+          description: Un ObjectId ou "init" pour le premier exercice de la session.
       responses:
         '200':
           description: Prochain exercice
