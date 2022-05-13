@@ -488,8 +488,7 @@ components:
               dateDebut: "2020-01-01T00:08:00.000Z"
               dateFin: "2020-01-01T00:09:00.000Z"
               encadrant: "Philippe Pernelle"
-
-
+              id: 407f1f77bcf86cd799439077
         exercices:
           type: array
           items:
