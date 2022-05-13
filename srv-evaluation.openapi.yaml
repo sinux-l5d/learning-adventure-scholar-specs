@@ -10,7 +10,12 @@ info:
 paths:
   /eval:
     post:
-      summary: Récupère le code à évaluer
+      summary: Envoyer le code source à évaluer
+      description: |
+        Permet à un étudiant de faire valider son code source dans le cadre d'une session (un ensemble d'exercices).
+
+        La soumission sera bloquée si la date de fin de séance est dépassée.
+        Les informations concernant la session (et par extension, la séance) devront être demandées au service d'exercices.
       tags:
         - Evaluation
       requestBody:
@@ -18,27 +23,47 @@ paths:
         content:
           application/json:
             schema:
+              required: 
+                - idEtu
+                - idExo
+                - idSession
+                - idSeance
+                - reponseEtudiant
               type: object
               properties:
-                userId:
-                  type: integer
-                exerciceID:
+                idEtu:
+                  type: string
+                  pattern: '^[a-zA-Z][a-zA-Z\-]*[a-zA-Z]\.[a-zA-Z][a-zA-Z\-]*[a-zA-Z]$'
+                  example: david.wayntal
+                  description: Identifiant de l'étudiant (prenom.nom). Le nom et le prénom doivent faire au moins 2 caractères
+                idExo:
                   type: string
                   format: ObjectId
                   description: ID de l'exercice dans la base exercice
+                idSession:
+                  type: string
+                  format: ObjectId
+                  description: ID de la session dans la base exercice
+                idSeance:
+                  type: string
+                  format: ObjectId
+                  description: ID de la séance dans la session en cours
                 reponseEtudiant:
                   type: string
-                  description: Code de l'étudiant
+                  description: Code source de l'étudiant
       responses:
         '200':
-          description: Réponse à l'evaluation de l'exercice. 
+          description: |
+            Réponse à l'evaluation de l'exercice pour l'IHM de l'étudiant.
+
+            /!\ Cela ne représente pas ce qui est envoyé au service de résultats. Ce dernier reçoit plus d'informations (cf [SrvResult](./srv-resultat.openapi.yaml)).
           content:
             application/json:
               schema:
+                required:
+                  - validationExercice
                 type: object
                 properties:
-                  userId:
-                    type: integer
                   validationExercice:
                     type: string
                     enum:
@@ -46,6 +71,12 @@ paths:
                       - ErreurCompile
                       - ErreurExecution
                       - Faux
+                    description: |
+                      État de la validation de l'exercice.
+                      * `Ok` - Le code est correct.
+                      * `ErreurCompile` - Le code n'a pas pu être compilé.
+                      * `ErreurExecution` - Le code n'a pas pu être exécuté.
+                      * `Faux` - Le code ne renvoie pas le résultat attendu.
                   log:
                     type: string
 
