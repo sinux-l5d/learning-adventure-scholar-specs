@@ -290,6 +290,11 @@ paths:
             type: string
             format: ObjectId
           description: Un ObjectId ou "init" pour le premier exercice de la session.
+        - in: header
+          name: X-Etudiant-ID
+          schema:
+            type: string
+            pattern: '^[a-zA-Z\-]+\.[a-zA-Z\-]+$'
       responses:
         '200':
           description: | 
