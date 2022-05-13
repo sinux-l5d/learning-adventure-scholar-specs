@@ -295,6 +295,12 @@ paths:
           schema:
             type: string
             pattern: '^[a-zA-Z\-]+\.[a-zA-Z\-]+$'
+        - in: header
+          name: X-Seance-ID
+          schema:
+            type: string
+            format: ObjectId
+
       responses:
         '200':
           description: | 
