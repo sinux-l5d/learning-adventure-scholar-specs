@@ -469,12 +469,27 @@ components:
             properties:
               groupe:
                 type: string
-              date:
+              dateDebut:
                 type: string
                 format: datetime
+              dateFin:
+                type: string
+                format: datetime
+              encadrant:
+                type: string
+              id:
+                type: string
+                format: ObjectId
+                nullable: true
+                description: Seulement en GET, pas POST
+              
             example:
               groupe: "1"
-              date: "2020-01-01T00:08:00.000Z"
+              dateDebut: "2020-01-01T00:08:00.000Z"
+              dateFin: "2020-01-01T00:09:00.000Z"
+              encadrant: "Philippe Pernelle"
+
+
         exercices:
           type: array
           items:
