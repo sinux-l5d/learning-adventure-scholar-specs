@@ -158,8 +158,6 @@ paths:
         '404':
           description: |
             Erreur de connexion avec le service stratégie
-            
-            @todo : devras utiliser erreur 500, et erreur plus explicive
           content:
             application/json:
               schema:
@@ -312,6 +310,14 @@ paths:
                 nullable: true
                 allOf:
                 - $ref: '#/components/schemas/ExerciceModeleComplet'
+        '400':
+          description: |
+            Erreur dans les informations fourni
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+              example: { error: "La séance '507f1f77bcf86cd799439017' (en header) n'est pas dans la session '507f1f77bcf86cd799439011'" }
 
         
 
