@@ -16,6 +16,8 @@ paths:
 
         La soumission sera bloquée si la date de fin de séance est dépassée.
         Les informations concernant la session (et par extension, la séance) devront être demandées au service d'exercices.
+
+        **A la fin de ce traitement, le service évaluation soumettra le résultat au service résultat via POST /tentatives.**
       tags:
         - Evaluation
       requestBody:
