@@ -201,10 +201,10 @@ components:
           type: boolean
           description: vrai si l'exercice est réussi, faux sinon
           example: false
-        dateSoumission :
+        dateSoumission:
           type: string 
           format: date-time
-          description : date à laquelle le service évaluation à soumis sa réponse
+          description: date à laquelle le service évaluation à soumis sa réponse
 
     Tentative:
       type: object
@@ -216,15 +216,15 @@ components:
         reponseEtudiant:
           type: string
           description : code écrit par l'étudiant
-          example : int a=1; for (int i=0 ; i<n;i++) {a=a*i;}
+          example: int a=1; for (int i=0 ; i<n;i++) {a=a*i;}
         logErreurs:
           type: string
-          description : message(s) d'erreur(s)
-          example : error segmentation ...
+          description: message(s) d'erreur(s)
+          example: error segmentation ...
         validationExercice:
           type: boolean
-          description : vrai si l'exercice et réussi, faux sinon
-        dateSoumission :
+          description: vrai si l'exercice et réussi, faux sinon
+        dateSoumission:
           type: string 
           format: date-time
           description: date à laquelle le service évaluation à soumis sa réponse

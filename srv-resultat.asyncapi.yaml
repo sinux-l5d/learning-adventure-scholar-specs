@@ -35,22 +35,25 @@ components:
           format: ObjectId
           description: Id natif de Mongo-db
           example: 507f1f77bcf86cd799439011
-        idEtu: 
-          type: string
-          format: string
-          example: 456qsd
-        idSession: 
-          type: string
-          format: string
-          example: 45sdf6sdf
         nomExo:
           type: string
           format: string
           example: boucle en C
+        idEtu: 
+          type: string
+          pattern: '^[a-zA-Z][a-zA-Z\-]*[a-zA-Z]\.[a-zA-Z][a-zA-Z\-]*[a-zA-Z]$'
+          example: david.wayntal
+        idSession: 
+          type: string
+          format: ObjectId
+          example: 480f1f77bcf86cd7994354f6
         nomSession:
           type: string
           format: string
-          example: L3 groupe 1 C
+          example: Découverte de la programmation
+        idSeance:
+          type: string
+          format: ObjectId
         difficulte:
           type: integer
           minimum: 1
@@ -90,13 +93,17 @@ components:
           example: 507f1f77bcf86cd799439011
         idEtu: 
           type: string
-          format: string
-          example: 456qsd
+          pattern: '^[a-zA-Z][a-zA-Z\-]*[a-zA-Z]\.[a-zA-Z][a-zA-Z\-]*[a-zA-Z]$'
+          example: david.wayntal
+        idSeance:
+          type: string
+          format: ObjectId
         validationExercice:
           type: boolean
         logErreurs:
           type: string
         dateSoumission:
-          type: object
+          type: string
+          format: datetime
         reponseEtudiant:
           type: string

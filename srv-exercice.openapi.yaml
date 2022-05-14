@@ -325,7 +325,7 @@ components:
   parameters:
     FilterTheme:
       in: query
-      name: theme
+      name: themes
       schema:
         type: array
         items:
