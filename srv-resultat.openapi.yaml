@@ -120,6 +120,10 @@ components:
           type: string
           format: string
           example: 623a34f35f35bcc5773e0445
+        idSeance: 
+          type: string
+          format: string
+          example: 623a34f35f35bcc5773e05e7
         nomExo:
           type: string
           format: string
@@ -154,15 +158,15 @@ components:
           type: number
           format: float
           description: Le temps maximum mis pour cette exercice
-        tentatives :
-          type : array
-          items :
+        tentatives:
+          type: array
+          items:
             $ref: '#/components/schemas/Tentative'
-          example : []
-          description : le code de l'étudiant avec ses logs d'erreur
-        debut :
-          type : string
-          format : date-time
+          example: []
+          description: le code de l'étudiant avec ses logs d'erreur
+        debut:
+          type: string
+          format: datetime
 
     EvaluationPourResultat:
       type: object
