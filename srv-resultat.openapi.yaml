@@ -181,6 +181,10 @@ components:
           type: string
           format: string
           example: 623a34f35f35bcc5773e0445
+        idSeance:
+          type: string
+          format: string
+          example: 148a34f35f35bcc5773e0745
         reponseEtudiant:
           type: string
           description: code écrit par l'étudiant
@@ -201,6 +205,10 @@ components:
     Tentative:
       type: object
       properties:
+        idSeance:
+          type: string
+          format: string
+          example: 148a34f35f35bcc5773e0745
         reponseEtudiant:
           type: string
           description : code écrit par l'étudiant
