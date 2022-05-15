@@ -104,6 +104,10 @@ components:
           type: string
         dateSoumission:
           type: string
-          format: datetime
+          format: date-time
+          description: | 
+            Date en UTC : heure française - 2H (RFC 3339 sec. 5.6)
+
+            Exemple : 2020-01-01T12:00:00.000Z correspond à 01/01/2020 à 14h00
         reponseEtudiant:
           type: string

@@ -166,7 +166,11 @@ components:
           description: le code de l'étudiant avec ses logs d'erreur
         debut:
           type: string
-          format: datetime
+          format: date-time
+          description: | 
+            Date en UTC : heure française - 2H (RFC 3339 sec. 5.6)
+
+            Exemple : 2020-01-01T12:00:00.000Z correspond à 01/01/2020 à 14h00
 
     EvaluationPourResultat:
       type: object
@@ -204,7 +208,12 @@ components:
         dateSoumission:
           type: string 
           format: date-time
-          description: date à laquelle le service évaluation à soumis sa réponse
+          description: |
+            Date à laquelle le service évaluation à soumis sa réponse
+
+            Date en UTC : heure française - 2H (RFC 3339 sec. 5.6)
+
+            Exemple : 2020-01-01T12:00:00.000Z correspond à 01/01/2020 à 14h00
 
     Tentative:
       type: object
@@ -227,4 +236,9 @@ components:
         dateSoumission:
           type: string 
           format: date-time
-          description: date à laquelle le service évaluation à soumis sa réponse
+          description: |
+            Date à laquelle le service évaluation à soumis sa réponse
+
+            Date en UTC : heure française - 2H (RFC 3339 sec. 5.6)
+
+            Exemple : 2020-01-01T12:00:00.000Z correspond à 01/01/2020 à 14h00
