@@ -462,6 +462,10 @@ components:
         nom:
           type: string
           example: Découverte des pointeurs en C
+        auteur:
+          type: string
+          example: Stéphane Talbot
+
         seances:
           type: array
           items:
