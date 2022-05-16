@@ -19,22 +19,8 @@ paths:
       tags:
         - Exercices
       parameters:
-        - in: query
-          name: themes
-          schema:
-            type: array
-            items:
-              type: string
-              format: keyword
-          # https://stackoverflow.com/a/69889483
-          style: form
-          explode: true
-        - in: query
-          name: difficulte
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 10
+        - $ref: '#/components/parameters/FilterTheme'
+        - $ref: '#/components/parameters/FilterDifficulte'
       responses:
         '200':
           description: Liste des exercices
@@ -80,22 +66,8 @@ paths:
       tags:
         - Exercices
       parameters:
-        - in: query
-          name: themes
-          schema:
-            type: array
-            items:
-              type: string
-              format: keyword
-          # https://stackoverflow.com/a/69889483
-          style: form
-          explode: true
-        - in: query
-          name: difficulte
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 10
+        - $ref: '#/components/parameters/FilterTheme'
+        - $ref: '#/components/parameters/FilterDifficulte'
       responses:
         '200':
           description: Liste des exercices
@@ -138,6 +110,7 @@ paths:
                 type: object
                 properties:
                   exercice:
+                    # Façon de mettre un object optionnel avec OpenAPI 3.0.1
                     nullable: true
                     allOf:
                       - $ref: '#/components/schemas/ExerciceModeleComplet'
@@ -154,6 +127,8 @@ paths:
   /exercices/{id}/next:
     get:
       summary: Prochain exercice
+      description: Appele le service stratégie pour obtenir le prochain exercice
+      deprecated: true
       tags:
         - Exercices
       parameters:
@@ -182,16 +157,198 @@ paths:
                       - $ref: '#/components/schemas/ExerciceModeleComplet'
         '404':
           description: |
-            Erreur de connexion avec le esrvice stratégie
-            
-            @todo : devras utiliser erreur 500, et erreur plus explicive
+            Erreur de connexion avec le service stratégie
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/StandardError'
               example: { error: "Not found: Error: connect ECONNREFUSED" }
 
+  /sessions:
+    post:
+      summary: Créer une session
+      description: | 
+        Créer une nouvelle session, composée d'exercices et de séances.
+
+        `exercices` doit être un tableau d'`ObjectId` correspondant à des exercices.
+      tags:
+        - Sessions
+      parameters:
+        - $ref: '#/components/parameters/PopulateSession'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionModeleReq'
+      responses:
+        '200':
+          description: Réussi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionModeleComplet'
+
+    get:
+      summary: Liste des sessions
+      tags:
+        - Sessions
+      parameters:
+        - $ref: '#/components/parameters/PopulateSession'
+      responses:
+        '200':
+          description: Liste des sessions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SessionModeleComplet'
+
+  /sessions/{id}:
+    get:
+      summary: Une session particulière
+      tags:
+        - Sessions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+        - $ref: '#/components/parameters/PopulateSession'
+      responses:
+        '200':
+          description: Session demandée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session:
+                    $ref: '#/components/schemas/SessionModeleComplet'
+        '404':
+          description: |
+            Si l'id n'est pas présent dans la bdd.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+
+  /sessions/{id}/exercices:
+    get:
+      summary: Liste des exercices d'une session
+      tags:
+        - Sessions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+        - $ref: '#/components/parameters/PopulateSession'
+      responses:
+        '200':
+          description: Liste des exercices de la session
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExerciceModeleComplet'
+        '404':
+          description: |
+            Si l'id n'est pas présent dans la bdd.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+
+  /sessions/{idSession}/exercices/{idExercice}/next:
+    get:
+      summary: Prochain exercice
+      description: Appele le service stratégie pour obtenir le prochain exercice
+      tags:
+        - Sessions
+      parameters:
+        - in: path
+          name: idSession
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+        - in: path
+          name: idExercice
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+          description: Un ObjectId ou "init" pour le premier exercice de la session.
+        - in: header
+          name: X-Etudiant-ID
+          schema:
+            type: string
+            pattern: '^[a-zA-Z][a-zA-Z\-]*[a-zA-Z]\.[a-zA-Z][a-zA-Z\-]*[a-zA-Z]$'
+        - in: header
+          name: X-Seance-ID
+          schema:
+            type: string
+            format: ObjectId
+
+      responses:
+        '200':
+          description: | 
+            Renvoie le prochain exercice, ou un objet vide si c'était le dernier exercice de la session.
+          content:
+            application/json:
+              schema:
+                # objet optionnel
+                nullable: true
+                allOf:
+                - $ref: '#/components/schemas/ExerciceModeleComplet'
+        '400':
+          description: |
+            Erreur dans les informations fourni
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+              example: { error: "La séance '507f1f77bcf86cd799439017' (en header) n'est pas dans la session '507f1f77bcf86cd799439011'" }
+
+        
+
 components:
+  parameters:
+    FilterTheme:
+      in: query
+      name: themes
+      schema:
+        type: array
+        items:
+          type: string
+          format: keyword
+      # https://stackoverflow.com/a/69889483 pour tableau de mots clés
+      style: form
+      explode: true
+    FilterDifficulte:
+      in: query
+      name: difficulte
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 10
+    PopulateSession:
+      description: Remplace les ID des exercices par les exercices.
+      in: query
+      name: populate
+      required: false
+      schema:
+        type: boolean
+        default: false
   schemas:
     ExerciceModeleCompletSansId:
       required:
@@ -273,10 +430,6 @@ components:
           example:
             - Stéphane Talbot
             - Philippe Pernelle
-        session:
-          type: string
-          format: string
-          description: Pas encore prévu!
     ExerciceModeleComplet:
       allOf:
         - $ref: '#/components/schemas/ExerciceModeleCompletSansId'
@@ -299,6 +452,75 @@ components:
               type: object
           reponse:
             type: object
+    SessionModeleReq:
+      description: Décris la requête de création d'une session
+      type: object
+      properties:
+        strategie:
+          type: string
+          example: lineaire
+        nom:
+          type: string
+          example: Découverte des pointeurs en C
+        auteur:
+          type: string
+          example: Stéphane Talbot
+
+        seances:
+          type: array
+          items:
+            type: object
+            properties:
+              groupe:
+                type: string
+              dateDebut:
+                type: string
+                format: datetime
+              dateFin:
+                type: string
+                format: datetime
+              encadrant:
+                type: string
+              id:
+                type: string
+                format: ObjectId
+                nullable: true
+                description: Seulement en GET, pas POST
+              
+            example:
+              groupe: "1"
+              dateDebut: "2020-01-01T00:08:00.000Z"
+              dateFin: "2020-01-01T00:09:00.000Z"
+              encadrant: "Philippe Pernelle"
+              id: 407f1f77bcf86cd799439077
+        exercices:
+          type: array
+          items:
+            type: string
+            format: ObjectId
+            example: 507f1f77bcf86cd799439011
+        
+      required:
+        - strategie
+        - nom
+        - exercices
+    SessionModeleComplet:
+      description: Décris une session
+      allOf:
+        - $ref: '#/components/schemas/SessionModeleReq'
+        - type: object
+          properties:
+            id:
+              type: string
+              format: ObjectId
+            exercices:
+              type: array
+              items:
+                description: Liste des ID des exercices de la session. Peut-être remplacé par un object ExerciceModeleComplet si l'option populate est a true.
+                oneOf:
+                  - type: string
+                    format: ObjectId
+                  - $ref: '#/components/schemas/ExerciceModeleComplet'
     StandardError:
       type: object
       properties:

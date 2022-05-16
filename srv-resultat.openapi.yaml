@@ -120,6 +120,10 @@ components:
           type: string
           format: string
           example: 623a34f35f35bcc5773e0445
+        idSeance: 
+          type: string
+          format: string
+          example: 623a34f35f35bcc5773e05e7
         nomExo:
           type: string
           format: string
@@ -154,15 +158,15 @@ components:
           type: number
           format: float
           description: Le temps maximum mis pour cette exercice
-        tentatives :
-          type : array
-          items :
+        tentatives:
+          type: array
+          items:
             $ref: '#/components/schemas/Tentative'
-          example : []
-          description : le code de l'étudiant avec ses logs d'erreur
-        debut :
-          type : string
-          format : date-time
+          example: []
+          description: le code de l'étudiant avec ses logs d'erreur
+        debut:
+          type: string
+          format: datetime
 
     EvaluationPourResultat:
       type: object
@@ -181,6 +185,10 @@ components:
           type: string
           format: string
           example: 623a34f35f35bcc5773e0445
+        idSeance:
+          type: string
+          format: string
+          example: 148a34f35f35bcc5773e0745
         reponseEtudiant:
           type: string
           description: code écrit par l'étudiant
@@ -193,26 +201,30 @@ components:
           type: boolean
           description: vrai si l'exercice est réussi, faux sinon
           example: false
-        dateSoumission :
+        dateSoumission:
           type: string 
           format: date-time
-          description : date à laquelle le service évaluation à soumis sa réponse
+          description: date à laquelle le service évaluation à soumis sa réponse
 
     Tentative:
       type: object
       properties:
+        idSeance:
+          type: string
+          format: string
+          example: 148a34f35f35bcc5773e0745
         reponseEtudiant:
           type: string
           description : code écrit par l'étudiant
-          example : int a=1; for (int i=0 ; i<n;i++) {a=a*i;}
+          example: int a=1; for (int i=0 ; i<n;i++) {a=a*i;}
         logErreurs:
           type: string
-          description : message(s) d'erreur(s)
-          example : error segmentation ...
+          description: message(s) d'erreur(s)
+          example: error segmentation ...
         validationExercice:
           type: boolean
-          description : vrai si l'exercice et réussi, faux sinon
-        dateSoumission :
+          description: vrai si l'exercice et réussi, faux sinon
+        dateSoumission:
           type: string 
           format: date-time
           description: date à laquelle le service évaluation à soumis sa réponse
