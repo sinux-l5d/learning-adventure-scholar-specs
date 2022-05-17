@@ -22,7 +22,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EvaluationPourResultat'
+              $ref: '#/components/schemas/EvaluationPourResultat'               
 
       responses:
         '200':
