@@ -167,6 +167,12 @@ components:
         debut :
           type : string
           format : date-time
+        aides :
+          type : array
+          items :
+            $ref: '#/components/schemas/Aide'
+          example : []
+          description : les demandes d'aide de l'étudiant
 
 
     EvaluationPourResultat:
