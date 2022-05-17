@@ -33,19 +33,48 @@ paths:
                 type: object
                 properties:
                   tentative:
-                    allOf:
+                    allOf :
                       - $ref: '#/components/schemas/EvaluationPourResultat'
-                      - type: object
-                        properties:
-                          id: 
-                            type: string
-                            format: objectId
-                            example: 54f6sd5f75df3sdf
+                      - type : object
+                        properties :
+                          id : 
+                            type : string
+                            format : objectId
+                            example : 54f6sd5f75df3sdf
 
+  /aides:
+    post:
+      summary: Récupère la demande d'aide renvoyée par l'étudiant'.
+      tags:
+        - Aides
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AideDepuisEtudiant'               
 
+      responses:
+        '200':
+          description: Réussi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  aide :
+                    allOf :
+                      - $ref: '#/components/schemas/AideDepuisEtudiant'
+                      - type : object
+                        properties :
+                          id : 
+                            type : string
+                            format : objectId
+                            example : 54f6sd5f75df3sdf
+                            
   /exercices:
     post:
-      summary: récupère la tentative faite par un étudiant
+      summary: récupère l'exercice commencé par un étudiant
       tags:
         - Exercices
       requestBody:
@@ -62,44 +91,19 @@ paths:
                 type: object
                 properties:
                   exercice:
-                    allOf:
+                    allOf :
                       - $ref: '#/components/schemas/ExercicePourResultat'
-                      - type: object
-                        properties:
-                          estFini: 
-                            type: boolean
-                            example: false
-                          id: 
-                            type: string
-                            format: objectId
-                            example: 623a41aecff8dcfdd896e978
-    get:
-      summary: Récupère tous les exercices de la base de donées résultat
-      tags:
-        - Exercices
-      responses:
-        '200':
-          description: Réussi
-          content:
-            application/json:
-              schema:
-                type: object
-                properties: 
-                  exercices:
-                    type: array
-                    items:
-                      allOf:
-                        - $ref: '#/components/schemas/ExercicePourResultat'
-                        - type: object
-                          properties:
-                            estFini: 
-                              type: boolean
-                              example: false
-                            id: 
-                              type: string
-                              format: objectId
-                              example: 54f6sd5f75df3sdf
-
+                      - type : object
+                        properties :
+                          estFini : 
+                            type : boolean
+                            example : false
+                          id : 
+                            type : string
+                            format : objectId
+                            example : 54f6sd5f75df3sdf
+                 
+                    
 
 
 components:
@@ -115,15 +119,11 @@ components:
         idEtu: 
           type: string
           format: string
-          example: 45fds4657dsffg56sg5d4cx2
+          example: 456qsd
         idSession: 
           type: string
           format: string
-          example: 623a34f35f35bcc5773e0445
-        idSeance: 
-          type: string
-          format: string
-          example: 623a34f35f35bcc5773e05e7
+          example: 45sdf6sdf
         nomExo:
           type: string
           format: string
@@ -158,87 +158,101 @@ components:
           type: number
           format: float
           description: Le temps maximum mis pour cette exercice
-        tentatives:
-          type: array
-          items:
+        tentatives :
+          type : array
+          items :
             $ref: '#/components/schemas/Tentative'
-          example: []
-          description: le code de l'étudiant avec ses logs d'erreur
-        debut:
-          type: string
-          format: date-time
-          description: | 
-            Date en UTC : heure française - 2H (RFC 3339 sec. 5.6)
+          example : []
+          description : le code de l'étudiant avec ses logs d'erreur
+        debut :
+          type : string
+          format : date-time
 
-            Exemple : 2020-01-01T12:00:00.000Z correspond à 01/01/2020 à 14h00
 
     EvaluationPourResultat:
       type: object
       properties:
-        idExo:
-          type: string
-          format: ObjectId
-          description: Id natif de Mongo-db
-          example: 507f1f77bcf86cd799439011
         idEtu:
           type: string
           format: ObjectId
           description: Id natif de Mongo-db
           example: 45fds4657dsffg56sg5d4cx2
-        idSession: 
+        idExo:
+          type: string
+          format: ObjectId
+          description: Id natif de Mongo-db
+          example: 507f1f77bcf86cd799439011
+        idSession : 
           type: string
           format: string
-          example: 623a34f35f35bcc5773e0445
-        idSeance:
-          type: string
-          format: string
-          example: 148a34f35f35bcc5773e0745
-        reponseEtudiant:
-          type: string
-          description: code écrit par l'étudiant
-          example: int a=1; for (int i=0 ; i<n;i++) {a=a*i;}
-        logErreurs:
-          type: string
-          description: message(s) d'erreur(s)
-          example: error segmentation ...
-        validationExercice:
-          type: boolean
-          description: vrai si l'exercice est réussi, faux sinon
-          example: false
-        dateSoumission:
-          type: string 
-          format: date-time
-          description: |
-            Date à laquelle le service évaluation à soumis sa réponse
-
-            Date en UTC : heure française - 2H (RFC 3339 sec. 5.6)
-
-            Exemple : 2020-01-01T12:00:00.000Z correspond à 01/01/2020 à 14h00
-
-    Tentative:
-      type: object
-      properties:
-        idSeance:
-          type: string
-          format: string
-          example: 148a34f35f35bcc5773e0745
+          example: 45sdf6sdf
         reponseEtudiant:
           type: string
           description : code écrit par l'étudiant
-          example: int a=1; for (int i=0 ; i<n;i++) {a=a*i;}
+          example : int a=1; for (int i=0 ; i<n;i++) {a=a*i;}
         logErreurs:
           type: string
-          description: message(s) d'erreur(s)
-          example: error segmentation ...
+          description : message(s) d'erreur(s)
+          example : error segmentation ...
         validationExercice:
           type: boolean
-          description: vrai si l'exercice et réussi, faux sinon
-        dateSoumission:
+          description : vrai si l'exercice et réussi, faux sinon
+        dateSoumission :
           type: string 
           format: date-time
-          description: |
-            Date à laquelle le service évaluation à soumis sa réponse
+          description : date à laquelle le service évaluation à soumis sa réponse
+          
+    Tentative:
+      type: object
+      properties:
+        reponseEtudiant:
+          type: string
+          description : code écrit par l'étudiant
+          example : int a=1; for (int i=0 ; i<n;i++) {a=a*i;}
+        logErreurs:
+          type: string
+          description : message(s) d'erreur(s)
+          example : error segmentation ...
+        validationExercice:
+          type: boolean
+          description : vrai si l'exercice est réussi, faux sinon
+        dateSoumission :
+          type: string 
+          format: date-time
+          description : date à laquelle le service évaluation à soumis sa réponse
 
-            Date en UTC : heure française - 2H (RFC 3339 sec. 5.6)
+    Aide :
+      type: object
+      properties:
+        id :
+          type: string
+          description : id de la demande d'aide
+          example : l54sqd42sq2
+        date :
+          type: string 
+          format: date-time
+          description : date à laquelle la demande d'aide a été effectuée
+        resolue:
+          type: boolean
+          description : faux si l'enseignant n'a pas fait d'action vers cet étudiant
 
-            Exemple : 2020-01-01T12:00:00.000Z correspond à 01/01/2020 à 14h00
+    AideDepuisEtudiant :
+      type: object
+      properties:
+        idExo :
+          type: string
+          description : id de l'exercice sur lequel la demande d'aide est effectuée
+          example : l54sqd42sq2
+        idEtu :
+          type: string
+          description : id de l'etudiant faisant la demande
+          example : 6dsqf4df46gh
+        idSession :
+          type: string
+          description : id de la session concernée par cet exercice
+          example : lqs65d4qs6d52 
+        idSeance :
+          type: string
+          description : id de la séance concernée par cet exercice
+          example : fg6h7dffh456
+        
