@@ -42,7 +42,7 @@ paths:
                             format : objectId
                             example : 54f6sd5f75df3sdf
 
-  /aides:
+  /exercices/aides:
     post:
       summary: Récupère la demande d'aide renvoyée par l'étudiant'.
       tags:
@@ -65,13 +65,32 @@ paths:
                   aide :
                     allOf :
                       - $ref: '#/components/schemas/AideDepuisEtudiant'
-                      - type : object
-                        properties :
-                          id : 
-                            type : string
-                            format : objectId
-                            example : 54f6sd5f75df3sdf
-                            
+                      
+
+  /exercices/{idExoEtu}/aides:
+    put:
+      summary: met à jour les demandes d'aide'.
+      tags:
+        - Aides
+      parameters:
+        - in: path
+          name: idExoEtu
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+
+      responses:
+        '200':
+          description: Réussi
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Aide'
+               
+
   /exercices:
     post:
       summary: récupère l'exercice commencé par un étudiant
