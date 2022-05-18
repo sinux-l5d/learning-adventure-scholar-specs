@@ -504,6 +504,9 @@ components:
         nom:
           type: string
           example: Découverte des pointeurs en C
+        auteur:
+          type: string
+          example: Stéphane Talbot
         exercices:
           type: array
           items:
