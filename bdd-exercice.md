@@ -49,5 +49,5 @@ Exemple : moyenne([1,2,3],3)\n
 			int res = 0;
 			for (int i =0 ;i<n ;i++) { res += T[i]};
 			return res/n ;} ",  
-**"aide"**:["pour calculer une moyenne il faut parcourir la liste","il faudra additionner toutes les valeurs","peut etre faut il faire une division à la fin"],
+**"aides"**:["pour calculer une moyenne il faut parcourir la liste","il faudra additionner toutes les valeurs","peut etre faut il faire une division à la fin"],
 }

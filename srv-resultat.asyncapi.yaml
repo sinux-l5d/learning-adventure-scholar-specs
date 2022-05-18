@@ -14,6 +14,12 @@ channels:
       summary: Préviens l'IHM qu'un étudiant a fait une nouvelle tentative sur un exercice
       message:
         $ref: '#/components/messages/etudiantFaitNouvelleTentative'
+  aides :
+    subscribe:
+      summary: Préviens l'IHM qu'un étudiant a fait une nouvelle demande d'aide
+      message:
+        $ref: '#/components/messages/etudiantFaitNouvelleDemandeAide'
+
 components:
   messages:
     etudiantCommenceExo:
@@ -26,6 +32,12 @@ components:
       contentType: application/json
       payload:
         $ref: '#/components/schemas/newAttemptPayload'
+    etudiantFaitNouvelleDemandeAide :
+      name : etudiantFaitNouvelleDemandeAide 
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/newAidePayload'
+    
   schemas:
     newExercicePayload:
       type: object
@@ -83,6 +95,16 @@ components:
           type: number
           format: float
           description: Le temps maximal mis pour cet exercice
+        
+        
+        aides:
+          type: array
+          items:
+            type: aide
+            format: keyword
+          description: id et date
+          example:[{'65d4f54fsdfsd',2020-01-01T12:00:00.000Z,false}] 
+
     newAttemptPayload:
       type: object
       properties:
@@ -111,3 +133,30 @@ components:
             Exemple : 2020-01-01T12:00:00.000Z correspond à 01/01/2020 à 14h00
         reponseEtudiant:
           type: string
+
+    newAidePayload:
+      type: object
+      properties:
+        idExo:
+          type: string
+          format: ObjectId
+          description: Id natif de Mongo-db
+          example: 507f1f77bcf86cd799439011
+        idEtu: 
+          type: string
+          pattern: '^[a-zA-Z][a-zA-Z\-]*[a-zA-Z]\.[a-zA-Z][a-zA-Z\-]*[a-zA-Z]$'
+          example: david.wayntal
+        idSession:
+          type: string
+          format: ObjectId
+        idSeance:
+          type: string
+          format: ObjectId
+        dateDemande: #pas certain, à vérifier car n'est pas dans le type AideDepuisEtudiant
+          type: string
+          format: date-time
+          description: | 
+            Date en UTC : heure française - 2H (RFC 3339 sec. 5.6)
+
+            Exemple : 2020-01-01T12:00:00.000Z correspond à 01/01/2020 à 14h00
+        
