@@ -237,6 +237,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StandardError'
+  
+  /sessions/{idSession}/seances/{idSeance}:
+    put:
+      summary: Modifier une séance
+      tags:
+        - Sessions
+      parameters:
+        - in: path
+          name: idSession
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+        - in: path
+          name: idSeance
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Seance'
+      responses:
+        '200':
+          description: Séance modifiée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session:
+                    $ref: '#/components/schemas/SessionModeleComplet'
+        '404':
+          description: Si un des id n'est pas présent dans la bdd
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+              example: { error: La session/seance n'existe pas }
+      
 
   /sessions/{id}/exercices:
     get:
@@ -465,53 +507,23 @@ components:
         auteur:
           type: string
           example: Stéphane Talbot
-
-        seances:
-          type: array
-          items:
-            type: object
-            properties:
-              groupe:
-                type: string
-              dateDebut:
-                type: string
-                format: date-time
-                description: | 
-                  Date en UTC : heure française - 2H (RFC 3339 sec. 5.6)
-
-                  Exemple : 2020-01-01T12:00:00.000Z correspond à 01/01/2020 à 14h00
-              dateFin:
-                type: string
-                format: date-time
-                description: | 
-                  Date en UTC : heure française - 2H (RFC 3339 sec. 5.6)
-
-                  Exemple : 2020-01-01T12:00:00.000Z correspond à 01/01/2020 à 14h00
-              encadrant:
-                type: string
-              id:
-                type: string
-                format: ObjectId
-                nullable: true
-                description: Seulement en GET, pas POST
-              
-            example:
-              groupe: "1"
-              dateDebut: "2020-01-01T00:08:00.000Z"
-              dateFin: "2020-01-01T00:09:00.000Z"
-              encadrant: "Philippe Pernelle"
-              id: 407f1f77bcf86cd799439077
         exercices:
           type: array
           items:
             type: string
             format: ObjectId
             example: 507f1f77bcf86cd799439011
+        seances:
+          type: array
+          items:
+            $ref: '#/components/schemas/Seance'
+          
         
       required:
         - strategie
         - nom
         - exercices
+        - seances
     SessionModeleComplet:
       description: Décris une session
       allOf:
@@ -529,6 +541,38 @@ components:
                   - type: string
                     format: ObjectId
                   - $ref: '#/components/schemas/ExerciceModeleComplet'
+    Seance:
+      type: object
+      properties:
+        groupe:
+          type: string
+        dateDebut:
+          type: string
+          format: date-time
+          description: | 
+            Date en UTC : heure française - 2H (RFC 3339 sec. 5.6)
+
+            Exemple : 2020-01-01T12:00:00.000Z correspond à 01/01/2020 à 14h00
+        dateFin:
+          type: string
+          format: date-time
+          description: | 
+            Date en UTC : heure française - 2H (RFC 3339 sec. 5.6)
+
+            Exemple : 2020-01-01T12:00:00.000Z correspond à 01/01/2020 à 14h00
+        encadrant:
+          type: string
+        id:
+          type: string
+          format: ObjectId
+          nullable: true
+          description: L'ID n'est présent qu'en requête GET, et ne doit pas être renseigné en requête POST/PUT/PATCH
+      example:
+        groupe: "1"
+        dateDebut: "2020-01-01T00:08:00.000Z"
+        dateFin: "2020-01-01T00:09:00.000Z"
+        encadrant: "Philippe Pernelle"
+        id: 407f1f77bcf86cd799439077
     StandardError:
       type: object
       properties:
