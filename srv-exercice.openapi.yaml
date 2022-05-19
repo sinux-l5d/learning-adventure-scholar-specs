@@ -335,6 +335,7 @@ paths:
           schema:
             type: string
             pattern: '^[a-zA-Z][a-zA-Z\-]*[a-zA-Z]\.[a-zA-Z][a-zA-Z\-]*[a-zA-Z]$'
+            example: david.wayntal
         - in: header
           name: X-Seance-ID
           schema:

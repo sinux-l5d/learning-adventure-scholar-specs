@@ -137,12 +137,14 @@ components:
           example: 507f1f77bcf86cd799439011
         idEtu: 
           type: string
-          format: string
-          example: 456qsd
+          pattern: '^[a-zA-Z][a-zA-Z\-]*[a-zA-Z]\.[a-zA-Z][a-zA-Z\-]*[a-zA-Z]$'
+          example: david.wayntal
         idSession: 
           type: string
-          format: string
-          example: 45sdf6sdf
+          format: ObjectId
+        idSeance:
+          type: string
+          format: ObjectId
         nomExo:
           type: string
           format: string
