@@ -122,6 +122,19 @@ paths:
                             format : objectId
                             example : 54f6sd5f75df3sdf
                  
+    get:
+      summary: Liste de tout les exercices commencés par un étudiant
+      tags:
+        - Exercices
+      responses:
+        '200':
+          description: Réussi
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExercicePourResultat'
                     
 
 
