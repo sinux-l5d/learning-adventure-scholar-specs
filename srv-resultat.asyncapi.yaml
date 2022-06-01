@@ -100,10 +100,10 @@ components:
         aides:
           type: array
           items:
-            type: aide
+            type: string
             format: keyword
           description: id et date
-          example:[{'65d4f54fsdfsd',2020-01-01T12:00:00.000Z,false}] 
+          example: [{'65d4f54fsdfsd',2020-01-01T12:00:00.000Z,false}] 
 
     newAttemptPayload:
       type: object
