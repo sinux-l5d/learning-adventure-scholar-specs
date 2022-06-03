@@ -295,4 +295,13 @@ components:
           type: string
           description : id de la séance concernée par cet exercice
           example : fg6h7dffh456
-        
+  securitySchemes:
+    UserProfile:
+      type: oauth2
+      description: Authentification OAuth2 avec le UserProfile (authorizationCode flow)
+      flows:
+        authorizationCode:
+          authorizationUrl: http://userprofile.learninglab.eu/oauth/authorize
+          tokenUrl: http://userprofile.learninglab.eu/oauth/token
+          scopes:
+            openid: "Permet authentification"
