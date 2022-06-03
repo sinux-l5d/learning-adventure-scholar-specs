@@ -305,3 +305,9 @@ components:
           tokenUrl: http://userprofile.learninglab.eu/oauth/token
           scopes:
             openid: "Permet authentification"
+    DevBearer:
+      type: http
+      scheme: bearer
+security:
+  - UserProfile: []
+  - DevBearer: []
