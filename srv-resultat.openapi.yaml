@@ -169,8 +169,14 @@ paths:
       tags:
         - OAuth2
       responses:
-        '200':
-          description: Réussi
+        '302':
+          description: L'authentification a réussi. redirection vers l'IHM
+          headers:
+            Location:
+              schema:
+                type: string
+                format: url
+                example: http://ihmresult.example.com/oauth/userprofile?access_token=123456789&refresh_token=987654321
           content:
             application/json:
               schema:
