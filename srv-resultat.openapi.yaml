@@ -145,14 +145,8 @@ paths:
       tags:
         - OAuth2
       responses:
-        '302':
+        '200':
           description: Redirection
-          headers:
-            Location:
-              schema:
-                type: string
-                format: url
-                example: http://learninglab.example.com/oauth/authorize?client_id=las&redirect_uri=http%3A%2F%2Flocalhost%3A3001%2Foauth%2Fuserprofile&response_type=code&state=123456789&scope=openid
           content:
             application/json:
               schema:
