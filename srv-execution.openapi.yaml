@@ -8,7 +8,7 @@ info:
     name: MIT License
 
 paths:
-  /eval:
+  /exec:
     post:
       summary: Envoyer le code source à évaluer
       description: |
