@@ -123,47 +123,6 @@ paths:
                 $ref: '#/components/schemas/StandardError'
               example: { error: Exercice not found }
               
-  
-  /exercices/{id}/next:
-    get:
-      summary: Prochain exercice
-      description: Appele le service stratégie pour obtenir le prochain exercice
-      deprecated: true
-      tags:
-        - Exercices
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-            format: ObjectId
-      responses:
-        '200':
-          description: |
-            Prochain exercice
-
-            Il sera vide si l'étudiant a fini tous les exercices.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  exercice:
-                    # Façon d'avoir un objet optionnel avec la version 3.0.1 d'OpenAPI
-                    # Plus prope en version supérieur avec oneOf null/object
-                    nullable: true
-                    allOf: 
-                      - $ref: '#/components/schemas/ExerciceModeleComplet'
-        '404':
-          description: |
-            Erreur de connexion avec le service stratégie
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/StandardError'
-              example: { error: "Not found: Error: connect ECONNREFUSED" }
-
   /sessions:
     post:
       summary: Créer une session
@@ -341,7 +300,6 @@ paths:
           schema:
             type: string
             format: ObjectId
-
       responses:
         '200':
           description: | 
@@ -362,7 +320,113 @@ paths:
                 $ref: '#/components/schemas/StandardError'
               example: { error: "La séance '507f1f77bcf86cd799439017' (en header) n'est pas dans la session '507f1f77bcf86cd799439011'" }
 
-        
+  /sessions/{idSession}/exercices/{idExercice}/tentative:
+    post:
+      summary: Soumettre une réponse à un exercice
+      description: |
+        Corrige la réponse de l'étudiant. En arrière plan, appelle le service d'exécution pour corriger la réponse, et soumet le résultat au service résultat.
+      tags:
+        - Sessions
+      parameters:
+        - in: path
+          name: idSession
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+        - in: path
+          name: idExercice
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+          description: Un ObjectId ou "init" pour le premier exercice de la session.
+        - in: header
+          name: X-Etudiant-ID
+          schema:
+            type: string
+            pattern: '^[a-zA-Z][a-zA-Z\-]*[a-zA-Z]\.[a-zA-Z][a-zA-Z\-]*[a-zA-Z]$'
+            example: david.wayntal
+        - in: header
+          name: X-Seance-ID
+          schema:
+            type: string
+            format: ObjectId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                response:
+                  type: string
+                  description: La réponse de l'étudiant
+                  example: "def sommeEntier(n):\n\treturn sum(range(n))\n"
+      responses:
+        '200':
+          description: |
+            L'exercice a été corrigé, le résultat est conforme à la réponse attendue.
+            Enum `status`:
+              * `ok`: La réponse est conforme à la réponse attendue
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+                  output:
+                    type: string
+                    description: Ce que l'exécuteur a retourné
+                    example: "hello world!"
+        '400':
+          description: |
+            Erreur de l'étudiant.
+            Enum `status`:
+              * `nok`: La réponse de l'étudiant n'est pas conforme à la réponse attendue.
+              * `error_exec`: Erreur dans l'exécution de l'exercice, ou timeout (l'exécution a pris plus de temps qu'attendu).
+              * `error_compile`: Erreur dans la compilation de l'exercice. Principalement de la syntax
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  output:
+                    type: string
+                    description: Logs d'erreurs
+              examples:
+                nok:
+                  value:
+                    status: "nok"
+                    output: "La fonction n'a pas passer tout les jeux de tests"
+                error_exec:
+                  value:
+                    status: "error_exec"
+                    output: "*** stack smashing detected ***: terminated"
+                error_compile:
+                  value:
+                    status: "error_compile"
+                    output: "<stdin>: Dans la fonction « main »:\n<stdin>:3:28: erreur: expected « ; » before « } » token"
+        '500':
+          description: |
+            Erreur du serveur : parsing json impossible, programme pour exécuter le code n'est pas dans le path, etc.
+            Enum `status`:
+              * `error_internal`: Erreur interne du serveur.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error_internal"
+                  output:
+                    type: string
+                    description: Logs d'erreurs
+                    example: "Error unmarshalling JSON"
 
 components:
   parameters:
