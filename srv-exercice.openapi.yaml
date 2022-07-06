@@ -364,69 +364,11 @@ paths:
                   example: "def sommeEntier(n):\n\treturn sum(range(n))\n"
       responses:
         '200':
-          description: |
-            L'exercice a été corrigé, le résultat est conforme à la réponse attendue.
-            Enum `status`:
-              * `ok`: La réponse est conforme à la réponse attendue
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "ok"
-                  output:
-                    type: string
-                    description: Ce que l'exécuteur a retourné
-                    example: "hello world!"
+          $ref: "./srv-execution.openapi.yaml#/components/responses/200ok"
         '400':
-          description: |
-            Erreur de l'étudiant.
-            Enum `status`:
-              * `nok`: La réponse de l'étudiant n'est pas conforme à la réponse attendue.
-              * `error_exec`: Erreur dans l'exécution de l'exercice, ou timeout (l'exécution a pris plus de temps qu'attendu).
-              * `error_compile`: Erreur dans la compilation de l'exercice. Principalement de la syntax
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  output:
-                    type: string
-                    description: Logs d'erreurs
-              examples:
-                nok:
-                  value:
-                    status: "nok"
-                    output: "La fonction n'a pas passer tout les jeux de tests"
-                error_exec:
-                  value:
-                    status: "error_exec"
-                    output: "*** stack smashing detected ***: terminated"
-                error_compile:
-                  value:
-                    status: "error_compile"
-                    output: "<stdin>: Dans la fonction « main »:\n<stdin>:3:28: erreur: expected « ; » before « } » token"
+          $ref: "./srv-execution.openapi.yaml#/components/responses/400badRequest"
         '500':
-          description: |
-            Erreur du serveur : parsing json impossible, programme pour exécuter le code n'est pas dans le path, etc.
-            Enum `status`:
-              * `error_internal`: Erreur interne du serveur.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "error_internal"
-                  output:
-                    type: string
-                    description: Logs d'erreurs
-                    example: "Error unmarshalling JSON"
+          $ref: "./srv-execution.openapi.yaml#/components/responses/500internalError"
 
 components:
   parameters:
@@ -460,8 +402,12 @@ components:
     ExerciceModeleCompletSansId:
       required:
         - nom
+        - template
+        - enonce
+        - difficulte
         - themes
         - langage
+        - contexte
         - correction
         - auteurs
 
@@ -504,16 +450,19 @@ components:
           type: number
           format: float
           description: Le temps maximal mis pour cet exercice
-        dataset:
+        contexte:
+          description: |
+            Le contexte est propre à chaque exercice et est utilisé par l'exécuteur de l'environnement (spécifié dans contexte.env).
+            
+            Par conséquent, les informations fournies doivent correspondre à ce dont l'environnement a besoin.
           type: array
           items:
             type: object
             properties:
-              contexte:
+              env:
                 type: string
                 format: string
-              jeuDeTests:
-                $ref: '#/components/schemas/Test'
+                description: Nom de l'environnement dans lequel l'exercice doit être exécuté
         correction:
           type: string
           description: Correction de l'exercice à réaliser
@@ -547,18 +496,6 @@ components:
               format: ObjectId
               description: Id natif de Mongo-db
               example: 507f1f77bcf86cd799439011
-    Test:
-      description: Décrit un jeu de test
-      type: array
-      items:
-        type: object
-        properties:
-          parametres:
-            type: array
-            items:
-              type: object
-          reponse:
-            type: object
     SessionModeleReq:
       description: Décris la requête de création d'une session
       type: object
@@ -582,8 +519,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Seance'
-          
-        
       required:
         - strategie
         - nom

@@ -2,7 +2,7 @@ openapi: 3.0.1
 
 info:
   title: LAWeb | Service d'evaluation
-  description: Permet d'évaluer le code d'un language par rapport à un exercice et répondre s'il est juste
+  description: Permet d'exécuter le code d'un language par rapport à un exercice et répondre s'il est juste (si l'environnement courrant est développer pour)
   version: 0.1.0
   license:
     name: MIT License
@@ -10,75 +10,110 @@ info:
 paths:
   /exec:
     post:
-      summary: Envoyer le code source à évaluer
+      summary: Envoyer le code source à exécuter
       description: |
-        Permet à un étudiant de faire valider son code source dans le cadre d'une session (un ensemble d'exercices).
-
-        La soumission sera bloquée si la date de fin de séance est dépassée.
-        Les informations concernant la session (et par extension, la séance) devront être demandées au service d'exercices.
-
-        **A la fin de ce traitement, le service évaluation soumettra le résultat au service résultat via POST /tentatives.**
+        Permet à un étudiant de faire valider son code source d'après un exercice de référence.
       tags:
-        - Evaluation
+        - Exécution
       requestBody:
         required: true
         content:
           application/json:
             schema:
               required: 
-                - idEtu
-                - idExo
-                - idSession
-                - idSeance
-                - reponseEtudiant
+                - exercice
+                - code
               type: object
               properties:
-                idEtu:
-                  type: string
-                  pattern: '^[a-zA-Z][a-zA-Z\-]*[a-zA-Z]\.[a-zA-Z][a-zA-Z\-]*[a-zA-Z]$'
-                  example: david.wayntal
-                  description: Identifiant de l'étudiant (prenom.nom). Le nom et le prénom doivent faire au moins 2 caractères
-                idExo:
-                  type: string
-                  format: ObjectId
-                  description: ID de l'exercice dans la base exercice
-                idSession:
-                  type: string
-                  format: ObjectId
-                  description: ID de la session dans la base exercice
-                idSeance:
-                  type: string
-                  format: ObjectId
-                  description: ID de la séance dans la session en cours
-                reponseEtudiant:
+                code:
                   type: string
                   description: Code source de l'étudiant
+                exercices:
+                  description: Exercice de rattachement, l'objet contexte doit avoir les propriété nécessaires pour l'environnement courrant
+                  $ref: './srv-exercice.openapi.yaml#/components/schemas/ExerciceModeleComplet'
       responses:
         '200':
-          description: |
-            Réponse à l'evaluation de l'exercice pour l'IHM de l'étudiant.
+          $ref: "#/components/responses/200ok"
+        '400':
+          $ref: "#/components/responses/400badRequest"
+        '500':
+          $ref: "#/components/responses/500internalError"
 
-            /!\ Cela ne représente pas ce qui est envoyé au service de résultats. Ce dernier reçoit plus d'informations (cf [SrvResult](./srv-resultat.openapi.yaml)).
-          content:
-            application/json:
-              schema:
-                required:
-                  - validationExercice
-                type: object
-                properties:
-                  validationExercice:
-                    type: string
-                    enum:
-                      - Ok
-                      - ErreurCompile
-                      - ErreurExecution
-                      - Faux
-                    description: |
-                      État de la validation de l'exercice.
-                      * `Ok` - Le code est correct.
-                      * `ErreurCompile` - Le code n'a pas pu être compilé.
-                      * `ErreurExecution` - Le code n'a pas pu être exécuté.
-                      * `Faux` - Le code ne renvoie pas le résultat attendu.
-                  log:
-                    type: string
+
+components:
+  responses:
+    200ok:
+      description: |
+        L'exercice a été corrigé, le résultat est conforme à la réponse attendue.
+        Enum `status`:
+          * `ok`: La réponse est conforme à la réponse attendue
+      content:
+        application/json:
+          schema:
+            required:
+              - status
+              - output
+            type: object
+            properties:
+              status:
+                type: string
+                example: "ok"
+              output:
+                type: string
+                description: Ce que l'exécuteur a retourné
+                example: "hello world!"
+    400badRequest:
+      description: |
+        Erreur de l'étudiant.
+        Enum `status`:
+          * `nok`: La réponse de l'étudiant n'est pas conforme à la réponse attendue.
+          * `error_exec`: Erreur dans l'exécution de l'exercice, ou timeout (l'exécution a pris plus de temps qu'attendu).
+          * `error_compile`: Erreur dans la compilation de l'exercice. Principalement de la syntax
+      content:
+        application/json:
+          schema:
+            required:
+              - status
+              - output
+            type: object
+            properties:
+              status:
+                type: string
+              output:
+                type: string
+                description: Logs d'erreurs
+          examples:
+            nok:
+              value:
+                status: "nok"
+                output: "La fonction n'a pas passer tout les jeux de tests"
+            error_exec:
+              value:
+                status: "error_exec"
+                output: "*** stack smashing detected ***: terminated"
+            error_compile:
+              value:
+                status: "error_compile"
+                output: "<stdin>: Dans la fonction « main »:\n<stdin>:3:28: erreur: expected « ; » before « } » token"
+    500internalError:
+      description: |
+        Erreur du serveur : parsing json impossible, programme pour exécuter le code n'est pas dans le path, erreur inconnue etc.
+        Enum `status`:
+          * `error_internal`: Erreur interne du serveur.
+          * `undefined`: Erreur inconnue.
+      content:
+        application/json:
+          schema:
+            required:
+              - status
+              - output
+            type: object
+            properties:
+              status:
+                type: string
+                example: "error_internal"
+              output:
+                type: string
+                description: Logs d'erreurs
+                example: "Error unmarshalling JSON"
 
