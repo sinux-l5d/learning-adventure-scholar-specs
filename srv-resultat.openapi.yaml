@@ -228,6 +228,10 @@ components:
             - fonction
             - condition
             - trie
+        enonce: 
+          type: string
+          format: string
+          example: Realiser un programme qui fork.
         langage:
           type: string
           example: C

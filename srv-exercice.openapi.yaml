@@ -400,6 +400,7 @@ components:
         - langage
         - correction
         - auteurs
+        - enonce
 
       type: object
       properties:
