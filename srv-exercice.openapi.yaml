@@ -358,7 +358,7 @@ paths:
             schema:
               type: object
               properties:
-                response:
+                reponse:
                   type: string
                   description: La réponse de l'étudiant
                   example: "def sommeEntier(n):\n\treturn sum(range(n))\n"

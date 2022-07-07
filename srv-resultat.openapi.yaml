@@ -14,7 +14,6 @@ paths:
   /tentatives:
     post:
       summary: Récupère les tentatives renvoyées par le service évaluation.
-
       tags:
         - Tentatives
       requestBody:
