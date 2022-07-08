@@ -455,14 +455,12 @@ components:
             Le contexte est propre à chaque exercice et est utilisé par l'exécuteur de l'environnement (spécifié dans contexte.env).
             
             Par conséquent, les informations fournies doivent correspondre à ce dont l'environnement a besoin.
-          type: array
-          items:
-            type: object
-            properties:
-              env:
-                type: string
-                format: string
-                description: Nom de l'environnement dans lequel l'exercice doit être exécuté
+          type: object
+          properties:
+            env:
+              type: string
+              format: string
+              description: Nom de l'environnement dans lequel l'exercice doit être exécuté
         correction:
           type: string
           description: Correction de l'exercice à réaliser
