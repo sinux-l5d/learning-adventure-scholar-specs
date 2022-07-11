@@ -410,6 +410,7 @@ components:
         - contexte
         - correction
         - auteurs
+        - enonce
 
       type: object
       properties:
