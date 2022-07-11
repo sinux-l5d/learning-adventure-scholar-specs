@@ -1,0 +1,123 @@
+openapi: 3.0.1
+
+info:
+  title: LAWeb | Service d'evaluation
+  description: Permet d'exécuter le code d'un language par rapport à un exercice et répondre s'il est juste (si l'environnement courrant est développer pour)
+  version: 0.1.0
+  license:
+    name: MIT License
+
+servers:
+  - url: http://127.0.0.1:3005
+    description: Serveur local
+
+paths:
+  /exec:
+    post:
+      summary: Envoyer le code source à exécuter
+      description: |
+        Permet à un étudiant de faire valider son code source d'après un exercice de référence.
+      tags:
+        - Exécution
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required: 
+                - exercice
+                - code
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: Code source de l'étudiant
+                exercices:
+                  description: Exercice de rattachement, l'objet contexte doit avoir les propriété nécessaires pour l'environnement courrant
+                  $ref: './srv-exercice.openapi.yaml#/components/schemas/ExerciceModeleComplet'
+      responses:
+        '200':
+          $ref: "#/components/responses/200ok"
+        '400':
+          $ref: "#/components/responses/400badRequest"
+        '500':
+          $ref: "#/components/responses/500internalError"
+
+
+components:
+  responses:
+    200ok:
+      description: |
+        L'exercice a été corrigé, le résultat est conforme à la réponse attendue.
+        Enum `status`:
+          * `ok`: La réponse est conforme à la réponse attendue
+      content:
+        application/json:
+          schema:
+            required:
+              - status
+              - output
+            type: object
+            properties:
+              status:
+                type: string
+                example: "ok"
+              output:
+                type: string
+                description: Ce que l'exécuteur a retourné
+                example: "hello world!"
+    400badRequest:
+      description: |
+        Erreur de l'étudiant.
+        Enum `status`:
+          * `nok`: La réponse de l'étudiant n'est pas conforme à la réponse attendue.
+          * `error_exec`: Erreur dans l'exécution de l'exercice, ou timeout (l'exécution a pris plus de temps qu'attendu).
+          * `error_compile`: Erreur dans la compilation de l'exercice. Principalement de la syntax
+      content:
+        application/json:
+          schema:
+            required:
+              - status
+              - output
+            type: object
+            properties:
+              status:
+                type: string
+              output:
+                type: string
+                description: Logs d'erreurs
+          examples:
+            nok:
+              value:
+                status: "nok"
+                output: "La fonction n'a pas passer tout les jeux de tests"
+            error_exec:
+              value:
+                status: "error_exec"
+                output: "*** stack smashing detected ***: terminated"
+            error_compile:
+              value:
+                status: "error_compile"
+                output: "<stdin>: Dans la fonction « main »:\n<stdin>:3:28: erreur: expected « ; » before « } » token"
+    500internalError:
+      description: |
+        Erreur du serveur : parsing json impossible, programme pour exécuter le code n'est pas dans le path, erreur inconnue etc.
+        Enum `status`:
+          * `error_internal`: Erreur interne du serveur.
+          * `undefined`: Erreur inconnue.
+      content:
+        application/json:
+          schema:
+            required:
+              - status
+              - output
+            type: object
+            properties:
+              status:
+                type: string
+                example: "error_internal"
+              output:
+                type: string
+                description: Logs d'erreurs
+                example: "Error unmarshalling JSON"
+

@@ -123,47 +123,6 @@ paths:
                 $ref: '#/components/schemas/StandardError'
               example: { error: Exercice not found }
               
-  
-  /exercices/{id}/next:
-    get:
-      summary: Prochain exercice
-      description: Appele le service stratégie pour obtenir le prochain exercice
-      deprecated: true
-      tags:
-        - Exercices
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-            format: ObjectId
-      responses:
-        '200':
-          description: |
-            Prochain exercice
-
-            Il sera vide si l'étudiant a fini tous les exercices.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  exercice:
-                    # Façon d'avoir un objet optionnel avec la version 3.0.1 d'OpenAPI
-                    # Plus prope en version supérieur avec oneOf null/object
-                    nullable: true
-                    allOf: 
-                      - $ref: '#/components/schemas/ExerciceModeleComplet'
-        '404':
-          description: |
-            Erreur de connexion avec le service stratégie
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/StandardError'
-              example: { error: "Not found: Error: connect ECONNREFUSED" }
-
   /sessions:
     post:
       summary: Créer une session
@@ -341,7 +300,6 @@ paths:
           schema:
             type: string
             format: ObjectId
-
       responses:
         '200':
           description: | 
@@ -362,7 +320,55 @@ paths:
                 $ref: '#/components/schemas/StandardError'
               example: { error: "La séance '507f1f77bcf86cd799439017' (en header) n'est pas dans la session '507f1f77bcf86cd799439011'" }
 
-        
+  /sessions/{idSession}/exercices/{idExercice}/tentative:
+    post:
+      summary: Soumettre une réponse à un exercice
+      description: |
+        Corrige la réponse de l'étudiant. En arrière plan, appelle le service d'exécution pour corriger la réponse, et soumet le résultat au service résultat.
+      tags:
+        - Sessions
+      parameters:
+        - in: path
+          name: idSession
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+        - in: path
+          name: idExercice
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+          description: Un ObjectId ou "init" pour le premier exercice de la session.
+        - in: header
+          name: X-Etudiant-ID
+          schema:
+            type: string
+            pattern: '^[a-zA-Z][a-zA-Z\-]*[a-zA-Z]\.[a-zA-Z][a-zA-Z\-]*[a-zA-Z]$'
+            example: david.wayntal
+        - in: header
+          name: X-Seance-ID
+          schema:
+            type: string
+            format: ObjectId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reponse:
+                  type: string
+                  description: La réponse de l'étudiant
+                  example: "def sommeEntier(n):\n\treturn sum(range(n))\n"
+      responses:
+        '200':
+          $ref: "./srv-execution.openapi.yaml#/components/responses/200ok"
+        '400':
+          $ref: "./srv-execution.openapi.yaml#/components/responses/400badRequest"
+        '500':
+          $ref: "./srv-execution.openapi.yaml#/components/responses/500internalError"
 
 components:
   parameters:
@@ -396,11 +402,14 @@ components:
     ExerciceModeleCompletSansId:
       required:
         - nom
+        - template
+        - enonce
+        - difficulte
         - themes
         - langage
+        - contexte
         - correction
         - auteurs
-        - enonce
 
       type: object
       properties:
@@ -441,16 +450,17 @@ components:
           type: number
           format: float
           description: Le temps maximal mis pour cet exercice
-        dataset:
-          type: array
-          items:
-            type: object
-            properties:
-              contexte:
-                type: string
-                format: string
-              jeuDeTests:
-                $ref: '#/components/schemas/Test'
+        contexte:
+          description: |
+            Le contexte est propre à chaque exercice et est utilisé par l'exécuteur de l'environnement (spécifié dans contexte.env).
+            
+            Par conséquent, les informations fournies doivent correspondre à ce dont l'environnement a besoin.
+          type: object
+          properties:
+            env:
+              type: string
+              format: string
+              description: Nom de l'environnement dans lequel l'exercice doit être exécuté
         correction:
           type: string
           description: Correction de l'exercice à réaliser
@@ -484,18 +494,6 @@ components:
               format: ObjectId
               description: Id natif de Mongo-db
               example: 507f1f77bcf86cd799439011
-    Test:
-      description: Décrit un jeu de test
-      type: array
-      items:
-        type: object
-        properties:
-          parametres:
-            type: array
-            items:
-              type: object
-          reponse:
-            type: object
     SessionModeleReq:
       description: Décris la requête de création d'une session
       type: object
@@ -519,8 +517,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Seance'
-          
-        
       required:
         - strategie
         - nom
