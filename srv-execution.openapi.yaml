@@ -1,9 +1,9 @@
 openapi: 3.0.1
 
 info:
-  title: LAWeb | Service d'evaluation
+  title: LAWeb | Service d'exécution
   description: Permet d'exécuter le code d'un language par rapport à un exercice et répondre s'il est juste (si l'environnement courrant est développer pour)
-  version: 0.1.0
+  version: 1.0.0
   license:
     name: MIT License
 
@@ -12,6 +12,7 @@ servers:
     description: Serveur local
 
 paths:
+
   /exec:
     post:
       summary: Envoyer le code source à exécuter
@@ -42,7 +43,6 @@ paths:
           $ref: "#/components/responses/400badRequest"
         '500':
           $ref: "#/components/responses/500internalError"
-
 
 components:
   responses:

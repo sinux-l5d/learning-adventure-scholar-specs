@@ -1,7 +1,7 @@
 asyncapi: '2.4.0'
 info:
-  title: Requêtes asynchrone du service Résultat
-  version: 0.1.0
+  title: LAWeb | API asynchrone du service Résultat
+  version: 1.0.0
   description: Les différentes requêtes utilisant des WebSockets du service Résultat.
 
 channels:

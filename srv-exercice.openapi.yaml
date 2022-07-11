@@ -3,7 +3,7 @@ openapi: 3.0.1
 info:
   title: LAWeb | Service d'exercice
   description: Permet de gérer des exercices et d'obtenir le suivant.
-  version: 0.2.0
+  version: 1.0.0
   license:
     name: MIT License
 
