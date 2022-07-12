@@ -1,8 +1,8 @@
-openapi: 3.0.0
+openapi: 3.0.1
 info:
-  title: Service de résultat
+  title: LAWeb | Service de résultat
   description: Il récupère les données utiles pour le professeur
-  version: 0.1.0
+  version: 1.0.0
   license:
     name: MIT License
 
@@ -14,7 +14,6 @@ paths:
   /tentatives:
     post:
       summary: Récupère les tentatives renvoyées par le service évaluation.
-
       tags:
         - Tentatives
       requestBody:
@@ -126,6 +125,9 @@ paths:
       summary: Liste de tout les exercices commencés par un étudiant
       tags:
         - Exercices
+      security:
+        - UserProfile: []
+        - DevBearer: []
       responses:
         '200':
           description: Réussi
@@ -136,7 +138,51 @@ paths:
                 items:
                   $ref: '#/components/schemas/ExercicePourResultat'
                     
-
+  /oauth:
+    get:
+      summary: Redirige vers le portail d'authentification
+      tags:
+        - OAuth2
+      responses:
+        '200':
+          description: Redirection
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    format: url
+                    example: http://learninglab.example.com/oauth/authorize?client_id=las&redirect_uri=http%3A%2F%2Flocalhost%3A3001%2Foauth%2Fuserprofile&response_type=code&state=123456789&scope=openid
+  /oauth/userprofile:
+    get:
+      summary: Callback de l'API OAuth2
+      description: Route utilisée par l'API OAuth2 pour récupérer les informations de l'utilisateur
+      tags:
+        - OAuth2
+      responses:
+        '302':
+          description: L'authentification a réussi. redirection vers l'IHM
+          headers:
+            Location:
+              schema:
+                type: string
+                format: url
+                example: http://ihmresult.example.com/oauth/userprofile?access_token=123456789&refresh_token=987654321
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    format: string
+                    example: 0325495fc8825f656dd08bc1e0a13c257f0ad249
+                  refreshToken:
+                    type: string
+                    format: string
+                    example: 154c3ab67cf6e83aafac10fc9fe68ab7f003df13
 
 components:
   schemas: 
@@ -181,6 +227,10 @@ components:
             - fonction
             - condition
             - trie
+        enonce: 
+          type: string
+          format: string
+          example: Realiser un programme qui fork.
         langage:
           type: string
           example: C
@@ -295,4 +345,16 @@ components:
           type: string
           description : id de la séance concernée par cet exercice
           example : fg6h7dffh456
-        
+  securitySchemes:
+    UserProfile:
+      type: oauth2
+      description: Authentification OAuth2 avec le UserProfile (authorizationCode flow)
+      flows:
+        authorizationCode:
+          authorizationUrl: http://userprofile.learninglab.eu/oauth/authorize
+          tokenUrl: http://userprofile.learninglab.eu/oauth/token
+          scopes:
+            openid: "Permet authentification"
+    DevBearer:
+      type: http
+      scheme: bearer

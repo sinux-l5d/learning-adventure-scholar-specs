@@ -1,24 +1,28 @@
-asyncapi: '2.3.0'
+asyncapi: '2.4.0'
 info:
-  title: Requêtes asynchrone du service Résultat
-  version: 0.1.0
+  title: LAWeb | API asynchrone du service Résultat
+  version: 1.0.0
   description: Les différentes requêtes utilisant des WebSockets du service Résultat.
+
 channels:
+
   exercices:
     subscribe:
       summary: Préviens l'IHM qu'un étudiant a commencé un nouvel exercice
       message:
         $ref: '#/components/messages/etudiantCommenceExo'
+
   tentatives:
     subscribe:
       summary: Préviens l'IHM qu'un étudiant a fait une nouvelle tentative sur un exercice
       message:
         $ref: '#/components/messages/etudiantFaitNouvelleTentative'
-  aides :
+
+  aides:
     subscribe:
       summary: Préviens l'IHM qu'un étudiant a fait une nouvelle demande d'aide
       message:
-        $ref: '#/components/messages/etudiantFaitNouvelleDemandeAide'
+        $ref: '#/components/messages/etudiantDemandeAide'
 
 components:
   messages:
@@ -32,8 +36,8 @@ components:
       contentType: application/json
       payload:
         $ref: '#/components/schemas/newAttemptPayload'
-    etudiantFaitNouvelleDemandeAide :
-      name : etudiantFaitNouvelleDemandeAide 
+    etudiantDemandeAide:
+      name: etudiantFaitNouvelleDemandeAide 
       contentType: application/json
       payload:
         $ref: '#/components/schemas/newAidePayload'
@@ -42,10 +46,14 @@ components:
     newExercicePayload:
       type: object
       properties:
+        id:
+          type: string
+          format: ObjectId
+          description: Id de l'exercice de l'étudiant
         idExo:
           type: string
           format: ObjectId
-          description: Id natif de Mongo-db
+          description: Id de l'exercice associé
           example: 507f1f77bcf86cd799439011
         nomExo:
           type: string
@@ -58,6 +66,7 @@ components:
         idSession: 
           type: string
           format: ObjectId
+          description: Id de la session contenant l'exercice
           example: 480f1f77bcf86cd7994354f6
         nomSession:
           type: string
@@ -66,10 +75,11 @@ components:
         idSeance:
           type: string
           format: ObjectId
-        difficulte:
-          type: integer
-          minimum: 1
-          maximum: 10
+        estFini:
+          type: boolean
+        language:
+          type: string
+          example: C
         themes:
           type: array
           items:
@@ -81,82 +91,102 @@ components:
             - fonction
             - condition
             - trie
-        language:
-          type: string
-          example: C
-        session:
-          type: string
-          example: L3 gp1 2022
+        difficulte:
+          type: integer
+          minimum: 1
+          maximum: 10
         tempsMoyen:
           type: number
-          format: float
+          format: integer
           description: Le temps moyen estimé pour cet exerice
-        tempsMaximal:
+        tempsMaximum:
           type: number
-          format: float
+          format: integer
           description: Le temps maximal mis pour cet exercice
-        
-        
+        debut:
+          type: string
+          format: date-time
+        tentatives:
+          type: array
+          items:
+            $ref: '#/components/schemas/tentative'
         aides:
           type: array
           items:
-            type: aide
-            format: keyword
-          description: id et date
-          example:[{'65d4f54fsdfsd',2020-01-01T12:00:00.000Z,false}] 
+            $ref: '#/components/schemas/aide'
 
     newAttemptPayload:
+      allOf:
+        - $ref: '#/components/schemas/tentative'
+        - type: object
+          properties:
+            idEtu:
+              type: string
+              format: ObjectId
+            idExo:
+              type: string
+              format: ObjectId
+            idSession:
+              type: string
+              format: ObjectId
+            idExoEtu:
+              type: string
+              format: ObjectId
+              description: Id correspondant à newExercicePayload.id
+
+    newAidePayload:
+      allOf:
+        - $ref: '#/components/schemas/aide'
+        - type: object
+          properties:
+            idExo:
+              type: string
+              format: ObjectId
+              description: Id natif de Mongo-db
+              example: 507f1f77bcf86cd799439011
+            idEtu: 
+              type: string
+              pattern: '^[a-zA-Z][a-zA-Z\-]*[a-zA-Z]\.[a-zA-Z][a-zA-Z\-]*[a-zA-Z]$'
+              example: david.wayntal
+            idSession:
+              type: string
+              format: ObjectId
+            idSeance:
+              type: string
+              format: ObjectId
+
+    tentative:  
       type: object
       properties:
-        idExo:
+        id:
           type: string
           format: ObjectId
-          description: Id natif de Mongo-db
-          example: 507f1f77bcf86cd799439011
-        idEtu: 
-          type: string
-          pattern: '^[a-zA-Z][a-zA-Z\-]*[a-zA-Z]\.[a-zA-Z][a-zA-Z\-]*[a-zA-Z]$'
-          example: david.wayntal
-        idSeance:
-          type: string
-          format: ObjectId
+          description: Id unique de la tentative
         validationExercice:
           type: boolean
+          description: True si validé à cette tentative
         logErreurs:
           type: string
         dateSoumission:
           type: string
           format: date-time
-          description: | 
-            Date en UTC : heure française - 2H (RFC 3339 sec. 5.6)
-
-            Exemple : 2020-01-01T12:00:00.000Z correspond à 01/01/2020 à 14h00
         reponseEtudiant:
           type: string
-
-    newAidePayload:
-      type: object
-      properties:
-        idExo:
-          type: string
-          format: ObjectId
-          description: Id natif de Mongo-db
-          example: 507f1f77bcf86cd799439011
-        idEtu: 
-          type: string
-          pattern: '^[a-zA-Z][a-zA-Z\-]*[a-zA-Z]\.[a-zA-Z][a-zA-Z\-]*[a-zA-Z]$'
-          example: david.wayntal
-        idSession:
-          type: string
-          format: ObjectId
+          format: multiline
         idSeance:
           type: string
           format: ObjectId
-        dateDemande: #pas certain, à vérifier car n'est pas dans le type AideDepuisEtudiant
+          description: Id de la séance à laquelle la tentative a été soumise
+
+    aide:
+      type: object
+      properties:
+        id:
+          type: string
+          format: ObjectId
+        date:
           type: string
           format: date-time
-          description: | 
-            Date en UTC : heure française - 2H (RFC 3339 sec. 5.6)
-
-            Exemple : 2020-01-01T12:00:00.000Z correspond à 01/01/2020 à 14h00
-        
+        resolue:
+          type: boolean
+          description: True si l'enseignant a traité le problème
