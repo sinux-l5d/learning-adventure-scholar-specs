@@ -307,10 +307,13 @@ paths:
           content:
             application/json:
               schema:
-                # objet optionnel
-                nullable: true
-                allOf:
-                - $ref: '#/components/schemas/ExerciceModeleComplet'
+                type: object
+                properties:
+                  exerciceSuivant:
+                    # objet optionnel
+                    nullable: true
+                    allOf:
+                    - $ref: '#/components/schemas/ExerciceModeleComplet'
         '400':
           description: |
             Erreur dans les informations fourni
